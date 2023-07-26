@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np-front-to-back
+  namespace: project1ns
+spec:
+  policyTypes:
+  - Ingress
+  #- Egress
+  podSelector:
+    matchLabels:
+       netzone: backend 
+       project: project1ns
+  ingress:
+  - from:
+    # - ipBlock:
+    #    cidr: 10.13.2.0/24 
+    #    except:
+    #    - 10.13.2.254/32
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+           netzone: frontend 
+           project: project1ns 
+    #ports:
+    #- protocol: TCP
+    #  port: 1111
+    #- protocol: TCP
+    #  port: 2222
+  egress:
+  - to:
+    #- ipBlock:
+    #    cidr: 10.13.4.2/32
+    #ports:
+    #- protocol: TCP
+    #  port: 22
+    #- namespaceSelector: {}
+    #  podSelector:
+    #    matchLabels:
+    #       netzone: backend
+    #       project: project1ns
+    #ports:
+    #- protocol: TCP
+    #  port: 2222

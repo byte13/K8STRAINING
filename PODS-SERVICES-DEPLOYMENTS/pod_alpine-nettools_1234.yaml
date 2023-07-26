@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontendpod-1234 
+  labels:
+    app: frontendpod-1234 
+spec:
+  containers:
+  - name: frontendpod-1234 
+    image: docker.io/byte13/alpine-k8s-tools 
+    ports:
+    - containerPort: 1234
+    command: [ "/K8SLAB/ncwebsrv.sh", "1234" ]
+    securityContext:
+      privileged: true

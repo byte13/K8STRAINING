@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+# Allow all DNS queries
+kind: NetworkPolicy
+metadata:
+  name: cluster-dns 
+  # namespace: default
+spec:
+  policyTypes:
+  - Egress
+  podSelector: {}
+  egress:
+  - to:
+    # To intra cluster DNS only
+    # Comment next line out to allow trafics to all external DNS, too.
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53

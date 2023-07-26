@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodered-pod
+  labels:
+    app: b13-nodered
+spec:
+  containers:
+  - name: nodered-container
+    image: docker.io/nodered/node-red
+    ports:
+    - containerPort: 1880

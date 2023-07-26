@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np-b13-grp2
+  # namespace: default
+spec:
+  policyTypes:
+  - Ingress
+  - Egress
+  podSelector:
+    matchLabels:
+       b13podgrp: b13-grp2
+  ingress:
+  - from:
+    # - ipBlock:
+    #    cidr: 10.13.2.0/24 
+    #    except:
+    #    - 10.13.2.254/32
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+           b13podgrp: b13-grp2
+    ports:
+    - protocol: TCP
+      port: 3333
+    - protocol: TCP
+      port: 4444
+  egress:
+  - to:
+    #- ipBlock:
+    #    cidr: 10.13.4.2/32
+    #ports:
+    #- protocol: TCP
+    #  port: 22
+
+    - namespaceSelector: {}
+      podSelector:
+        matchLabels:
+           b13podgrp: b13-grp2
+    ports:
+    - protocol: TCP
+      port: 3333
+    - protocol: TCP
+      port: 4444

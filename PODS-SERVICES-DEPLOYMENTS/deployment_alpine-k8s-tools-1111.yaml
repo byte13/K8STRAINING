@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontendpod-1111
+  labels:
+    app: frontendpod-1111 
+  #namespace: project1ns 
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: frontendpod-1111 
+  template:
+    metadata:
+      labels:
+        app: frontendpod-1111 
+        project: project1
+        netzone: frontend
+    spec:
+      containers:
+      - name: frontendpod-1111 
+        imagePullPolicy: Always
+        #imagePullPolicy: IfNotPresent
+        image: docker.io/byte13/alpine-k8s-tools
+        ports:
+        - containerPort: 1111
+        command: [ "/K8SLAB/ncwebsrv.sh", "1111" ]
+        #args: [ "while true; do cat /B13/HTML/index.html | nc -l -p 1111; done" ]
+        securityContext:
+          privileged: true
+      nodeSelector:
+        kubernetes.io/hostname: winux043.lab.byte13.org

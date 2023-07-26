@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: busybox-6666 
+  namespace: b13-ns3
+spec:
+  type: NodePort
+  externalTrafficPolicy: Cluster
+  selector:
+    app: busybox-6666 
+  ports: 
+    - protocol: TCP
+      port: 6666
+      targetPort: 6666

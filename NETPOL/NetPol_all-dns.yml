@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+# Allow all DNS queries
+kind: NetworkPolicy
+metadata:
+  name: b13-all-dns 
+  # namespace: default
+spec:
+  policyTypes:
+  - Egress
+  podSelector: {}
+  egress:
+  - to:
+    # To all destinations 
+    # Uncomment next line to allow trafics to internal DNS, only
+    #- namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
