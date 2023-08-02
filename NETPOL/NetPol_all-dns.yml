@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 # Allow all DNS queries
 kind: NetworkPolicy
 metadata:
-  name: b13-all-dns 
+  name: np-all-dns 
   # namespace: default
 spec:
   policyTypes:

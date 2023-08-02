@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 # Allow all DNS queries
 kind: NetworkPolicy
 metadata:
-  name: cluster-dns 
+  name: np-cluster-dns 
   # namespace: default
 spec:
   policyTypes:

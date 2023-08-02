@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: b13-intra-ns-only
+  name: np-intra-ns-only
   #namespace: default
 spec:
   policyTypes:
