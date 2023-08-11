@@ -230,7 +230,7 @@ spec:
 " >${K8SCSRMANIFEST}
 
     echo -e ${LCYAN}
-    echo -e "A Kubernetes manifest is available in ${K8SCSRMANIFEST}"
+    echo -e "The Kubernetes manifest is available in ${K8SCSRMANIFEST}"
 }
 
 function CheckCsrStatus () {
