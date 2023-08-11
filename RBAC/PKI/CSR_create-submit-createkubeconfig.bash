@@ -9,7 +9,7 @@
 #           The script proposes to submit the request directly to a Kubernetes cluster to retrieve the x509 certificate
 #
 # Pre-requisites : have the Kubernetes cluster root CA available in file ${CACERTFILE}
-#                  If Kubernetes cluster is used as PKI, ensure ${KUBECONFIG} context has enough
+#                  If Kubernetes cluster is used as PKI, ensure ${CNKUBECONFIG} context has enough
 #                  privileges to submit CSR's, approve CSR and retrieve x509 certificates
 #                  Adjust x509 attributes in user variables section according to your organisation
 #
@@ -20,13 +20,13 @@
 # User variables section
 #
 CURDATETIME=`date +%Y%m%d%H%M`
-PARENTDIR="/B13/K8SLABS/K8STRAINING/RBAC"
+PARENTDIR="/B13/B13lab/K8S/K8STRAINING/RBAC"
 CREDSDIR="${PARENTDIR}/PKI/creds"
 K8SMANIFESTSDIR="${PARENTDIR}/PKI/manifests"
 
 # User and group to protect files
-OWNER="user1"
-GRP="user1"
+OWNER="tag"
+GRP="b13admin"
 
 # x509 local attributes
 COUNTRY="CH"
@@ -34,13 +34,13 @@ STATE="Vaud"
 LOCALITY="Lausanne"
 OU="DevOps"
 
+# API server root CA is usually in <masternode>:/etc/kubernetes/pki/ca.crt
 CACERTFILE=${CREDSDIR}/K8S_CA-cert.crt
 RSAKEYLENGTH=2048
 
 # Kubernetes API server information to be used to submit, approve and retrieve cluster certificates 
 K8SCLUSTERNAME="kubernetes"
 K8SAPISERVERIP="10.13.4.1"
-K8SAPISERVERPORT="6443"
 K8SAPISERVERPORT="6443"
 K8SAPISERVERFQDN="winux041.lab.byte13.org"
 K8SAPISERVERURL=https://${K8SK8SAPISERVERIP}:${K8SK8SAPISERVERPORT}
@@ -76,24 +76,24 @@ function DisplayUsage () {
     echo -e "To retrieve CSR from Kubernetes cluster and create kubeconfig file : ${LGRAY}${0} -c johndev -o project1 -s -a -r${NC}"
 }
 
-if [ $# != 4 ]; then
+if [ $# -lt 4 ]; then
     DisplayUsage
     exit 0
 fi
 
 # Initialize variables
-APPROVEREQ="X"
+APPROVECSR="X"
 CN="X"
 K8SREQNAME="X"
 K8SCSRMANIFEST="X"
-RETRIEVEREQ="X"
-SUBMITREQ="X"
-KUBECONFIG=${K8SMANIFESTSDIR}/${CN}_kube.config
+RETRIEVECERT="X"
+SUBMITCSR="X"
+CNKUBECONFIG=${K8SMANIFESTSDIR}/${CN}_kube.config
 
-while getopts "a:c:o:r:s" opt; do
+while getopts "ac:o:rs" opt; do
     case ${opt} in
       a )
-        APPROVEREQ="yes"
+        APPROVECSR="yes"
         ;;
       c )
         CN=${OPTARG}
@@ -105,7 +105,7 @@ while getopts "a:c:o:r:s" opt; do
         RETRIEVECERT="yes"
         ;;
       s )
-        SUBMITCERT="yes"
+        SUBMITCSR="yes"
         ;;
       \? )
         DisplayUsage 
@@ -124,15 +124,16 @@ shift $((OPTIND -1))
 # Set variables based on user inputs
 #
 SUBJECT="/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORG}/OU=${OU}/CN=${CN}"
-PRIVATEKEYFILE=${CREDSDIR}/${CN}.key
-PUBLICKEYFILE=${CREDSDIR}/${CN}.pub
-CSRFILE=${CREDSDIR}/${CN}.csr
-K8SREQNAME=csr-${CN}
-K8SCSRMANIFEST=${K8SMANIFESTSDIR}/${CN}_CSRrequest.yaml
-KUBECONFIG=${K8SMANIFESTSDIR}/${CN}_kube.config
+PRIVATEKEYFILE="${CREDSDIR}/${CN}.key"
+PUBLICKEYFILE="${CREDSDIR}/${CN}.pub"
+CSRFILE="${CREDSDIR}/${CN}.csr"
+CERTFILE="${CN}.cer"
+K8SREQNAME="csr-${CN}"
+K8SCSRMANIFEST="${K8SMANIFESTSDIR}/${CN}_CSRrequest.yaml"
+CNKUBECONFIG="${K8SMANIFESTSDIR}/${CN}_kube.config"
 
 #
-# Possibly create output directories
+# Create output directories if they don't exist, yet
 #
 if [ ! -d ${CREDSDIR} ]; then
     mkdir ${CREDSDIR}
@@ -150,6 +151,8 @@ fi
 # Definition of various functions
 #
 function PrepareCSR () {
+### Create RSA keys and CSR
+    echo -e "${LCYAN}Entering PrepareCSR()${NC}"
 
     # Save existing file for same user
     if [ -f ${PRIVATEKEYFILE} ]; then
@@ -160,10 +163,6 @@ function PrepareCSR () {
         mv ${CSRFILE} ${CSRFILE}_${CURDATETIME}
     fi
 
-    if [ -f ${CERTFILE} ]; then
-        mv ${CERTFILE} ${CERTFILE}_${CURDATETIME}
-    fi
-
     echo -e ${YELLOW}
     echo "Preparing certificate for ${SUBJECT}"
     echo -e ${NC}
@@ -172,44 +171,44 @@ function PrepareCSR () {
     # With prompt
     #openssl req -new -newkey rsa:2048 -nodes -keyout ${PRIVATEKEYFILE} -out ${CSRFILE} -config ${OPENSSLCNF} ${RSAKEYLENGTH}
     # Without prompt
-    openssl req -nodes -newkey rsa:${RSAKEYLENGTH} \
+    openssl req -nodes \
+	        -newkey rsa:${RSAKEYLENGTH} \
        	        -keyout ${PRIVATEKEYFILE} \
     	        -out    ${CSRFILE} \
 	        -subj   ${SUBJECT} 
+
+    # Protect generated files, aspecially the private key
     chown ${OWNER}:${GRP} ${PRIVATEKEYFILE} 
     chmod 600 ${PRIVATEKEYFILE}
     chown ${OWNER}:${GRP} ${CSRFILE} 
     chmod 640 ${CSRFILE}
 
-    echo -e ${YELLOW}
-    echo "The Certificate Signing Request (CSR) is available in ${CSRFILE}"
-    echo "You could now submit is to a Certification Authority (CA)"
-    echo "You could also cut and paste the CSR from here :"
-    echo -e ${LGRAY}
-    cat ${CSRFILE}
-    echo -e ${NC}
-}
+    if [ "X${SUBMITCSR}" != "Xyes" ]; then
+        SUBMITCSR="X"
+        echo -e "${LCYAN}Would you like to submit CSR right now ? (yes / no) :${NC}"
+        read SUBMITCSR
+    fi
+    if [ "X${SUBMITCSR}" != "Xyes" ]; then
+	echo -e "${LCYAN}"
+        echo -e "The Certificate Signing Request (CSR) is available in ${CSRFILE}"
+        echo -e "You could also cut and paste the CSR from here :"
+        echo -e ${LGRAY}
+        cat ${CSRFILE}
+        echo -e ${NC}
 
-function CheckCsrStatus () {
-    # Check if CSR for same CN exists in Kubernetes cluster
-    ANSWER="X"
-    CSREXISTS="X"
-    CSRSTATUS="X"
-    CSREXISTS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.metadata.name}")
-    CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}")
-    if [ "X${CSREXISTS}" == "X${K8SREQNAME}" ]; then
-        echo -e "${LCYAN}A CSR with common name ${CN} is already submitted with status ${BRORANGE}${CSRSTATUS}${LCYAN}; should we delete it ? (Yes / No)${NC}"
-            read ANSWER
-        if [ "X${ANSWER}" == "XYes" ]; then
-            kubectl delete csr ${K8SREQNAME}
-        else
-            echo -e "${RED}Current request left as is and exiting${NC}"
-            exit 0
-        fi
+	CreateK8sManifest
+
+        echo -e ${LCYAN}
+        echo -e "You could now submit the CSR to a Certification Authority (CA)"
+        echo -e ${NC}
+
+	exit 0
     fi
 }
 
 function CreateK8sManifest () {
+### Prepare a Kubernetes manifest to submit CSR to cluster PKI
+    echo -e "${LCYAN}Entering CreateK8sManifest()${NC}"
 
     if [ -f ${K8SCSRMANIFEST} ]; then
         mv ${K8SCSRMANIFEST} ${K8SCSRMANIFEST}_${CURDATETIME}
@@ -230,43 +229,72 @@ spec:
   - client auth
 " >${K8SCSRMANIFEST}
 
+    echo -e ${LCYAN}
+    echo -e "A Kubernetes manifest is available in ${K8SCSRMANIFEST}"
 }
 
-function SubmitCSR () {
+function CheckCsrStatus () {
+### Check if CSR was already submited for same CN
+    echo -e "${LCYAN}Entering CheckCsrStatus()${NC}"
 
-    CheckCsrStatus
-
-    if [ -f ${K8SCSRMANIFEST} ]; then
-        kubectl apply -f ${K8SCSRMANIFEST} 
-    fi
-
-    echo -e "${LCYAN}An administrator with appropriate rights can now approve or deny the request using the following commands :${NC}
-             ${CYAN}kubectl get csr
-	     kubectl certificate [approve | deny] <csr request name>
-	     ${NC}"
-    if [ ${APPROVECSR} != "yes" ]; then
-        APPROVECSR="X"
-        echo -e "${LCYAN}Would you like to approve it right now ? (yes / no) :${NC}"
-        read APPROVECSR
-        if [ X${APPROVECSR} == "Xyes" ]; then
-           ApproveCSR 
+    # Check if a CSR for same CN already exists in Kubernetes cluster
+    ANSWER="X"
+    CSREXISTS="X"
+    CSRSTATUS="X"
+    CSREXISTS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.metadata.name}")
+    CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}")
+    if [ "X${CSREXISTS}" == "X${K8SREQNAME}" ]; then
+        echo -e "${LCYAN}A CSR with common name ${CN} is already submitted with status ${BRORANGE}${CSRSTATUS}${LCYAN}; should we delete it ? (yes / no)${NC}"
+            read ANSWER
+        if [ "X${ANSWER}" == "Xyes" ]; then
+            kubectl delete csr ${K8SREQNAME}
         else
-           echo -e "${LCYAN}Please, ask a cluster administrator to approve your request."
+            echo -e "${RED}Current request left as is and exiting${NC}"
+            exit 0
         fi
     fi
 }
 
-function ApproveCSR ()  {
+function SubmitCSR () {
+### Submit request for x509 certificate to Kubernetes cluster PKI
+    echo -e "${LCYAN}Entering SubmitCSR()${NC}"
 
-    if [ X${APPORVECSR} == "Xyes" ]; then
-       kubectl certificate approve ${K8SREQNAME} >/dev/null 2>&1
+    if [ -f ${K8SCSRMANIFEST} ]; then
+        CheckCsrStatus
+        kubectl apply -f ${K8SCSRMANIFEST} 
     else
-        echo -e "${LCYAN}Please, ask a cluster administrator to approve your request."
-        echo -e "Hit Enter key when done..."
+	echo -e "${LCYAN} ${K8SCSRMANIFEST} not found; cannot submit request to Kubernetes cluster${NC}"
+	exit 0
+    fi
+
+    if [ X${APPROVECSR} != "Xyes" ]; then
+
+        echo -e "${LCYAN}An administrator with appropriate rights can now approve or deny the request using the following command :${NC}
+        ${LGRAY}kubectl certificate [approve | deny] ${K8SCSRNAME} 
+        ${NC}"
+
+        APPROVECSR="X"
+        echo -e "${LCYAN}Would you like to approve the request yourself right now ? (yes / no) :${NC}"
+        read APPROVECSR
     fi
 }
 
-function RetriveCertificate () {
+function ApproveCSR ()  {
+### Approve request (requires enough privileges in Kubernetes cluster)
+    echo -e "${LCYAN}Entering ApproveCSR()${NC}"
+
+    kubectl certificate approve ${K8SREQNAME} >/dev/null 2>&1
+
+    if [ "X${RETRIEVECERT}" != "Xyes" ]; then
+        RETRIEVECERT="X"
+        echo -e "${LCYAN}Would you like to retrieve x509 certificate right now and create kubeconfig file ? (yes / no) :${NC}"
+        read RETRIEVECERT
+    fi
+}
+
+function RetrieveCertificate () {
+### Retrieve signed x509 certificate
+    echo -e "${LCYAN}Entering RetriveCertificate()${NC}"
 
     if [ -f ${CERTFILE} ]; then
         mv ${CERTFILE} ${CERTFILE}_${CURDATETIME}
@@ -276,7 +304,7 @@ function RetriveCertificate () {
     echo -e "Check CSR status...${NC}"
     CSRSTATUS=X
     CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}") 
-    if [ X${CSRSTATUS} == "XApproved" ]; then
+    if [ "X${CSRSTATUS}" == "XApproved" ]; then
         echo -e "Congatulations ! Your request for a certificate has been approved :-)"
         echo -e "Retrieving signed certificate in file ${CREDSDIR}${CN}.cer..."
         kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.certificate}" | base64 --decode >${CERTFILE}
@@ -287,42 +315,45 @@ function RetriveCertificate () {
 }
 
 function CreateKubeconfigFile () {
+### Create a kubeconfig file with retrieved x509 certificate and respective private key
+    echo -e "${LCYAN}Entering CreateKubeconfigFile()${NC}"
 
-    if [ -f ${KUBECONFIG} ]; then
-        mv ${KUBECONFIG} ${KUBECONFIG}_${CURDATETIME}
+    if [ -f ${CNKUBECONFIG} ]; then
+        mv ${CNKUBECONFIG} ${CNKUBECONFIG}_${CURDATETIME}
     fi
 
-    if [ -f ${CACERTFILE} ]; then
+    if [ ! -f ${CACERTFILE} ]; then
         echo -e "${BRORANGE}${CACERTFILE} is missing; ensure it contains respective Kubernetes cluster root CA certificate${NC}"
         exit 0
     fi
 
     echo -e "Preparing kubeconfig file..."
     #kubectl config set-cluster ${K8SCLUSTERNAME} --server=${K8SAPISERVERURL} \
-    kubectl config --kubeconfig ${KUBECONFIG} set-cluster ${K8SCLUSTERNAME} --server=${K8SAPISERVERURL} \
-	                                                                    --certificate-authority ${CACERTFILE} \
-				                                            --embed-certs=true
-    if [ -f ${KUBECONFIG} ]; then
-        chown ${OWNER}:${GRP}
-        chmod 600 ${KUBECONFIG}
+    kubectl config --kubeconfig ${CNKUBECONFIG} set-cluster ${K8SCLUSTERNAME} --server=${K8SAPISERVERURL} \
+	                                                                      --certificate-authority ${CACERTFILE} \
+				                                              --embed-certs=true
+    if [ -f ${CNKUBECONFIG} ]; then
+        chown ${OWNER}:${GRP} ${CNKUBECONFIG}
+        chmod 600 ${CNKUBECONFIG}
     else
-        echo -e "${BRORANGE}${KUBECONFIG} file missing.${NC}"
+        echo -e "${BRORANGE}${CNKUBECONFIG} file missing.${NC}"
         exit 0
     fi
 
     #kubectl config set-credentials ${CN} --client-key=${PRIVATEKEYFILE} \
-    kubectl config --kubeconfig ${KUBECONFIG} set-credentials ${CN} --client-key=${PRIVATEKEYFILE} \
-    	                                                            --client-certificate=${CERTFILE} \
-				                                    --embed-certs=true
+    kubectl config --kubeconfig ${CNKUBECONFIG} set-credentials ${CN} --client-key=${PRIVATEKEYFILE} \
+    	                                                              --client-certificate=${CERTFILE} \
+				                                      --embed-certs=true
     #kubectl config set-context ${CN} --cluster=${K8SCLUSTERNAME} --user=${CN}
-    kubectl config --kubeconfig ${KUBECONFIG} set-context ${CN} --cluster=${K8SCLUSTERNAME} --user=${CN}
-    kubectl config --kubeconfig ${KUBECONFIG} use-context ${CN} --cluster=${K8SCLUSTERNAME} --user=${CN}
+    kubectl config --kubeconfig ${CNKUBECONFIG} set-context ${CN} --cluster=${K8SCLUSTERNAME} --user=${CN}
+    kubectl config --kubeconfig ${CNKUBECONFIG} use-context ${CN} --cluster=${K8SCLUSTERNAME} --user=${CN}
 
-    echo -e "${LCYAN}Please, provide the user with ${KUBECONFIG} and ask him to use it as kubernetes client config file.
+    echo -e "${LCYAN}Please, provide the user with ${CNKUBECONFIG} and ask him to use it as kubernetes client config file.
              The following syntax could be used :${NC}
-             ${CYAN}kubectl config --kubeconfig ${KUBECONFIG} <command> 
+             ${CYAN}kubectl config --kubeconfig ${CNKUBECONFIG} <command> 
 	     ${NC}"
-    echo -e "${LCYAN}Instead of using --kubeconfig, she may also copy ${KUBECONFIG} into ~/.kube/config && chmod 600 $~/.kube/config${NC}"
+    echo -e "${LCYAN}Instead of using --kubeconfig, she may also move this file into ${LGRAY} ~/.kube/config && chmod 600 $~/.kube/config${NC}"
+    echo -e "${LCYAN}or point the variable KUBECONFIG to this file${NC}"
 }
 
 ########################################
@@ -333,18 +364,17 @@ function CreateKubeconfigFile () {
 
 PrepareCSR
 
-CreateK8sManifest
-
-if [ X${SUBMITCSR} == "Xyes" ]; then
-    SubmistCSR
+if [ "X${SUBMITCSR}" == "Xyes" ]; then
+    CreateK8sManifest
+    SubmitCSR
 fi
 
-if [ X${APPROVECSR} == "Xyes" ]; then
+if [ "X${APPROVECSR}" == "Xyes" ]; then
     ApproveCSR
 fi
 
-if [ X${RETRIEVECSR} == "Xyes" ]; then
+if [ "X${RETRIEVECERT}" == "Xyes" ]; then
     RetrieveCertificate
-    CreateKubeConfig
+    CreateKubeconfigFile
 fi
 
