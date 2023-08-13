@@ -69,34 +69,39 @@ LCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 
 function DisplayUsage () {
-    echo -e "Usage :   ${0} -c <common name> -o <organisation> [-s] [-a] [-r]"
+    echo -e "Usage : ${LGRAY}${0} -c <common name> -o <organisation> [-f <filename>] [[-s] [-a] [-r]]${NC}"
     echo -e "Just to to create CSR and Kubernetes manifest : ${LGRAY}${0} -c johndev -o project1 ${NC}"
     echo -e "To submit CSR to Kubernetes cluster : ${LGRAY}${0} -c johndev -o project1 -s${NC}"
-    echo -e "To approve CSR in Kubernetes cluster : ${LGRAY}${0} -c johndev -o project1 -s -a${NC}"
-    echo -e "To retrieve CSR from Kubernetes cluster and create kubeconfig file : ${LGRAY}${0} -c johndev -o project1 -s -a -r${NC}"
+    echo -e "To submit and approve CSR in Kubernetes cluster : ${LGRAY}${0} -c johndev -o project1 -s -a${NC}"
+    echo -e "To submit, approve and retrieve CSR from Kubernetes cluster then create kubeconfig file : ${LGRAY}${0} -c johndev -o project1 -s -a -r${NC}"
+    echo -e "To process a list retrieved from a file : ${LGRAY}${0} -f <filename> [[-s] [-a] [-r]]${NC}"
+    echo -e "Each line must have the following format (separator must be semicolumn) : ${LGRAY}<username>;<group>${NC}"
 }
 
-if [ $# -lt 4 ]; then
+if [[  $# -lt 4  &&  ${1} != "-f" ]]; then
     DisplayUsage
     exit 0
 fi
 
 # Initialize variables
-APPROVECSR="X"
-CN="X"
-K8SREQNAME="X"
-K8SCSRMANIFEST="X"
-RETRIEVECERT="X"
-SUBMITCSR="X"
-CNKUBECONFIG=${K8SMANIFESTSDIR}/${CN}_kube.config
+#APPROVECSR="X"
+#CN="X"
+#K8SREQNAME="X"
+#K8SCSRMANIFEST="X"
+#INPUTFILE="X"
+#RETRIEVECERT="X"
+#SUBMITCSR="X"
 
-while getopts "ac:o:rs" opt; do
+while getopts "ac:f:o:rs" opt; do
     case ${opt} in
       a )
         APPROVECSR="yes"
         ;;
       c )
         CN=${OPTARG}
+        ;;
+      f )
+        INPUTFILE=${OPTARG}
         ;;
       o )
         ORG=${OPTARG}
@@ -130,7 +135,7 @@ CSRFILE="${CREDSDIR}/${CN}.csr"
 CERTFILE="${CREDSDIR}/${CN}.cer"
 K8SREQNAME="csr-${CN}"
 K8SCSRMANIFEST="${K8SMANIFESTSDIR}/${CN}_CSRrequest.yaml"
-CNKUBECONFIG="${K8SMANIFESTSDIR}/${CN}_kube.config"
+CNKUBECONFIG="${CREDSDIR}/${CN}_kube.config"
 
 #
 # Create output directories if they don't exist, yet
@@ -152,7 +157,7 @@ fi
 #
 function PrepareCSR () {
 ### Create RSA keys and CSR
-    echo -e "${LCYAN}Entering PrepareCSR()${NC}"
+    #echo -e "${LCYAN}Entering PrepareCSR()${NC}"
 
     # Save existing file for same user
     if [ -f ${PRIVATEKEYFILE} ]; then
@@ -208,7 +213,7 @@ function PrepareCSR () {
 
 function CreateK8sManifest () {
 ### Prepare a Kubernetes manifest to submit CSR to cluster PKI
-    echo -e "${LCYAN}Entering CreateK8sManifest()${NC}"
+    #echo -e "${LCYAN}Entering CreateK8sManifest()${NC}"
 
     if [ -f ${K8SCSRMANIFEST} ]; then
         mv ${K8SCSRMANIFEST} ${K8SCSRMANIFEST}_${CURDATETIME}
@@ -229,20 +234,24 @@ spec:
   - client auth
 " >${K8SCSRMANIFEST}
 
+    chown ${OWNER}:${GRP} ${K8SCSRMANIFEST} 
+    chmod 640 ${K8SCSRMANIFEST}
+
     echo -e ${LCYAN}
-    echo -e "The Kubernetes manifest is available in ${K8SCSRMANIFEST}"
+    echo -e "The Kubernetes manifest for ${CN} is available in ${K8SCSRMANIFEST}"
+    echo -e ${NC}
 }
 
 function CheckCsrStatus () {
 ### Check if CSR was already submited for same CN
-    echo -e "${LCYAN}Entering CheckCsrStatus()${NC}"
+    #echo -e "${LCYAN}Entering CheckCsrStatus()${NC}"
 
     # Check if a CSR for same CN already exists in Kubernetes cluster
     ANSWER="X"
     CSREXISTS="X"
     CSRSTATUS="X"
-    CSREXISTS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.metadata.name}")
-    CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}")
+    CSREXISTS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.metadata.name}" >/dev/null 2>&1)
+    CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}" >/dev/null 2>&1)
     if [ "X${CSREXISTS}" == "X${K8SREQNAME}" ]; then
         echo -e "${LCYAN}A CSR with common name ${CN} is already submitted with status ${BRORANGE}${CSRSTATUS}${LCYAN}; should we delete it ? (yes / no)${NC}"
             read ANSWER
@@ -257,11 +266,11 @@ function CheckCsrStatus () {
 
 function SubmitCSR () {
 ### Submit request for x509 certificate to Kubernetes cluster PKI
-    echo -e "${LCYAN}Entering SubmitCSR()${NC}"
+    #echo -e "${LCYAN}Entering SubmitCSR()${NC}"
 
     if [ -f ${K8SCSRMANIFEST} ]; then
         CheckCsrStatus
-        kubectl apply -f ${K8SCSRMANIFEST} 
+        kubectl apply -f ${K8SCSRMANIFEST} >/dev/null 2>&1
     else
 	echo -e "${LCYAN} ${K8SCSRMANIFEST} not found; cannot submit request to Kubernetes cluster${NC}"
 	exit 0
@@ -281,7 +290,7 @@ function SubmitCSR () {
 
 function ApproveCSR ()  {
 ### Approve request (requires enough privileges in Kubernetes cluster)
-    echo -e "${LCYAN}Entering ApproveCSR()${NC}"
+    #echo -e "${LCYAN}Entering ApproveCSR()${NC}"
 
     kubectl certificate approve ${K8SREQNAME} >/dev/null 2>&1
 
@@ -294,7 +303,7 @@ function ApproveCSR ()  {
 
 function RetrieveCertificate () {
 ### Retrieve signed x509 certificate
-    echo -e "${LCYAN}Entering RetriveCertificate()${NC}"
+    #echo -e "${LCYAN}Entering RetriveCertificate()${NC}"
 
     if [ -f ${CERTFILE} ]; then
         mv ${CERTFILE} ${CERTFILE}_${CURDATETIME}
@@ -306,8 +315,11 @@ function RetrieveCertificate () {
     CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}") 
     if [ "X${CSRSTATUS}" == "XApproved" ]; then
         echo -e "Congatulations ! Your request for a certificate has been approved :-)"
-        echo -e "Retrieving signed certificate in file ${CREDSDIR}${CN}.cer..."
+        echo -e "Retrieving signed certificate in file ${CERTFILE}.cer..."
         kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.certificate}" | base64 --decode >${CERTFILE}
+
+        chown ${OWNER}:${GRP} ${CERTFILE} 
+        chmod 640 ${CERTFILE}
     else
         echo -e "${BRORANGE}Sorry, your certificate has not been approved, yet (?)${NC}"
         exit 0
@@ -316,7 +328,7 @@ function RetrieveCertificate () {
 
 function CreateKubeconfigFile () {
 ### Create a kubeconfig file with retrieved x509 certificate and respective private key
-    echo -e "${LCYAN}Entering CreateKubeconfigFile()${NC}"
+    #echo -e "${LCYAN}Entering CreateKubeconfigFile()${NC}"
 
     if [ -f ${CNKUBECONFIG} ]; then
         mv ${CNKUBECONFIG} ${CNKUBECONFIG}_${CURDATETIME}
@@ -361,6 +373,27 @@ function CreateKubeconfigFile () {
 # Main section
 #
 ########################################
+
+if [ "X${INPUTFILE}" != "X" ]; then
+
+    if [ ! -f ${INPUTFILE} ]; then
+	echo -e "${BRORANGE}${INPUTFILE} not found...${NC}"
+	exit 0
+    fi
+
+    USERSLIST=$(cat ${INPUTFILE})
+
+    for LINE in ${USERSLIST}; do
+        echo -e "${LCYAN}Processing ${LINE}${NC}"
+
+	CN=$(echo ${LINE} | awk -F"\;" '{print $1}')
+	ORG=$(echo ${LINE} | awk -F"\;" '{print $2}')
+
+	${0} -c ${CN} -o ${ORG} -s -a -r
+
+    done
+    exit 0
+fi
 
 PrepareCSR
 
