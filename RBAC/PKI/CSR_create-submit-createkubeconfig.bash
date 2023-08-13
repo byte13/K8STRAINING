@@ -128,7 +128,10 @@ shift $((OPTIND -1))
 #
 # Set variables based on user inputs
 #
+# In Kubernetes, Organization is interpreted as the group a user belongs, to
 SUBJECT="/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORG}/OU=${OU}/CN=${CN}"
+# x509 subject attribute can contain several Organizations as shown in the following example
+# SUBJECT="/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORG}/O=${ORG2}/OU=${OU}/CN=${CN}"
 PRIVATEKEYFILE="${CREDSDIR}/${CN}.key"
 PUBLICKEYFILE="${CREDSDIR}/${CN}.pub"
 CSRFILE="${CREDSDIR}/${CN}.csr"
