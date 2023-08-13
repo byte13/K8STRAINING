@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rolebinding-appsdev 
+  #namespace: default
+subjects:
+  - kind: Group
+    name: devgroup1 
+    apiGroup: ""
+roleRef:
+  kind: Role
+  name:  role-appsdev
+  apiGroup: ""

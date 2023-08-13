@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: role-appsdev
+# namespace: default
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "deployments", "services", "ingress", "configmaps"]
+    verbs: ["create", "get", "list", "delete"]
