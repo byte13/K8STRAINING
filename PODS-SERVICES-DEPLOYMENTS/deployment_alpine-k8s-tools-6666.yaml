@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backendpod-6666
+  labels:
+    app: backendpod-6666 
+  #namespace: project1ns 
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: backendpod-6666 
+  template:
+    metadata:
+      labels:
+        app: backendpod-6666 
+        project: project4
+        netzone: backend
+    spec:
+      containers:
+      - name: backendpod-6666 
+        imagePullPolicy: Always
+        #imagePullPolicy: IfNotPresent
+        image: docker.io/byte13/alpine-k8s-tools
+        ports:
+        - containerPort: 6666
+        command: [ "/K8SLAB/ncwebsrv.sh", "6666" ]
+        #command: [ "/bin/bash", "-c", "--" ]
+        #args: [ "while true; do cat /K8SLAB/index.html | nc -l -p 6666; done" ]
+        # Just spin & wait forever doing nothing usefull
+        #args: [ "while true; do sleep 30; done" ]
+      nodeSelector:
+        kubernetes.io/hostname: winux042.lab.byte13.org

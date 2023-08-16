@@ -40,14 +40,16 @@ RSAKEYLENGTH=2048
 
 # Kubernetes API server information to be used to submit, approve and retrieve cluster certificates 
 K8SCLUSTERNAME="kubernetes"
+K8SAPISERVERFQDN="winux041.lab.byte13.org"
 K8SAPISERVERIP="10.13.4.1"
 K8SAPISERVERPORT="6443"
-K8SAPISERVERFQDN="winux041.lab.byte13.org"
-K8SAPISERVERURL=https://${K8SK8SAPISERVERIP}:${K8SK8SAPISERVERPORT}
+K8SAPISERVERURL="https://${K8SAPISERVERIP}:${K8SAPISERVERPORT}"
 
 #
 # End of user varaibles section. Nothing to modify on the rest of this script
 ###################
+
+clear
 
 # Colors variables
 NC='\033[0m' # No Color
@@ -69,13 +71,16 @@ LCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 
 function DisplayUsage () {
-    echo -e "Usage : ${LGRAY}${0} -c <common name> -o <organisation> [-f <filename>] [[-s] [-a] [-r]]${NC}"
-    echo -e "Just to to create CSR and Kubernetes manifest : ${LGRAY}${0} -c johndev -o project1 ${NC}"
-    echo -e "To submit CSR to Kubernetes cluster : ${LGRAY}${0} -c johndev -o project1 -s${NC}"
-    echo -e "To submit and approve CSR in Kubernetes cluster : ${LGRAY}${0} -c johndev -o project1 -s -a${NC}"
-    echo -e "To submit, approve and retrieve CSR from Kubernetes cluster then create kubeconfig file : ${LGRAY}${0} -c johndev -o project1 -s -a -r${NC}"
-    echo -e "To process a list retrieved from a file : ${LGRAY}${0} -f <filename> [[-s] [-a] [-r]]${NC}"
-    echo -e "Each line must have the following format (separator must be semicolumn) : ${LGRAY}<username>;<group>${NC}"
+    echo -e "Usage : ${LGRAY}${0} -c <common name> -o <organisation> [-f <filename>] [-s] [-a] [-r] [-d}${NC}\n"
+    echo -e "To simply create a CSR and Kubernetes manifest : ${LGRAY}${0} -c johndev -o project1 ${NC}"
+    echo -e "To create and submit CSR to Kubernetes cluster : ${LGRAY}${0} -c johndev -o project1 -s${NC}"
+    echo -e "To create, submit and approve CSR in Kubernetes cluster : ${LGRAY}${0} -c johndev -o project1 -s -a${NC}"
+    echo -e "To create, submit, approve and retrieve CSR from Kubernetes cluster then create kubeconfig file : ${LGRAY}${0} -c johndev -o project1 -s -a -r${NC}\n"
+    echo -e "To process a list of users retrieved from a file : ${LGRAY}${0} -f <filename>${NC}"
+    echo -e "    Each line must have the following format (separator must be semicolumn) : ${LGRAY}<username>;<group>${NC}"
+    echo -e "    ${LGRAY}-s -a -r${NC} arguments are implicit when ${LGRAY}-f <filename> ${NC}is specified.\n"
+    echo -e "${LGRAY}-d ${NC}forces deletion of existing request with same name in the Kubernetes cluster."
+    echo -e "If not specified and a request with same name already exists in the Kubernetes cluster, the user is prompted to confirm deletion."
 }
 
 if [[  $# -lt 4  &&  ${1} != "-f" ]]; then
@@ -92,13 +97,16 @@ fi
 #RETRIEVECERT="X"
 #SUBMITCSR="X"
 
-while getopts "ac:f:o:rs" opt; do
+while getopts "ac:df:o:rs" opt; do
     case ${opt} in
       a )
         APPROVECSR="yes"
         ;;
       c )
         CN=${OPTARG}
+        ;;
+      d )
+        DELETECSR="yes"
         ;;
       f )
         INPUTFILE=${OPTARG}
@@ -198,8 +206,8 @@ function PrepareCSR () {
     fi
     if [ "X${SUBMITCSR}" != "Xyes" ]; then
 	echo -e "${LCYAN}"
-        echo -e "The Certificate Signing Request (CSR) is available in ${CSRFILE}"
-        echo -e "You could also cut and paste the CSR from here :"
+        echo -e "The Certificate Signing Request (CSR) is available in ${LGRAY}${CSRFILE}"
+        echo -e "${LCYAN}You could also cut and paste the CSR from here :"
         echo -e ${LGRAY}
         cat ${CSRFILE}
         echo -e ${NC}
@@ -241,22 +249,26 @@ spec:
     chmod 640 ${K8SCSRMANIFEST}
 
     echo -e ${LCYAN}
-    echo -e "The Kubernetes manifest for ${CN} is available in ${K8SCSRMANIFEST}"
+    echo -e "The Kubernetes manifest containing ${LGRAY}${CN} ${LCYAN}CSR is available in ${LGRAY}${K8SCSRMANIFEST}"
     echo -e ${NC}
 }
 
 function CheckCsrStatus () {
 ### Check if CSR was already submited for same CN
-    #echo -e "${LCYAN}Entering CheckCsrStatus()${NC}"
+    echo -e "${BRORANGE}Entering CheckCsrStatus()${NC}"
 
-    # Check if a CSR for same CN already exists in Kubernetes cluster
     ANSWER="X"
     CSREXISTS="X"
     CSRSTATUS="X"
-    CSREXISTS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.metadata.name}" >/dev/null 2>&1)
-    CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}" >/dev/null 2>&1)
-    if [ "X${CSREXISTS}" == "X${K8SREQNAME}" ]; then
-        echo -e "${LCYAN}A CSR with common name ${CN} is already submitted with status ${BRORANGE}${CSRSTATUS}${LCYAN}; should we delete it ? (yes / no)${NC}"
+    CSREXISTS="X"
+    CSREXISTS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.metadata.name}")
+    CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}")
+    if [[ ("${CSREXISTS}" == "${K8SREQNAME}") && ("${DELETECSR}" == "yes") ]]; then
+        echo -e "${LCYAN}A CSR with common name ${BRORANGE}${CN} ${LCYAN}is already submitted with status ${BRORANGE}${CSRSTATUS}${LCYAN}"
+        echo -e "${LCYAN}Since ${LGRAY}-d ${LCYAN}argument is set, the CSR is now deleted from Kubernetes cluster${NC}"
+            kubectl delete csr ${K8SREQNAME}
+    elif [ "${CSREXISTS}" == "${K8SREQNAME}" ]; then
+        echo -e "${LCYAN}A CSR with common name ${BRORANGE}${CN} ${LCYAN}is already submitted with status ${BRORANGE}${CSRSTATUS}${LCYAN}; should we delete it ? (yes / no)${NC}"
             read ANSWER
         if [ "X${ANSWER}" == "Xyes" ]; then
             kubectl delete csr ${K8SREQNAME}
@@ -275,7 +287,7 @@ function SubmitCSR () {
         CheckCsrStatus
         kubectl apply -f ${K8SCSRMANIFEST} >/dev/null 2>&1
     else
-	echo -e "${LCYAN} ${K8SCSRMANIFEST} not found; cannot submit request to Kubernetes cluster${NC}"
+	echo -e "${LGRAY}${K8SCSRMANIFEST}${LCYAN} not found; cannot submit request to Kubernetes cluster${NC}"
 	exit 0
     fi
 
@@ -312,13 +324,14 @@ function RetrieveCertificate () {
         mv ${CERTFILE} ${CERTFILE}_${CURDATETIME}
     fi
 
-    echo -e "Retrieving possibly approved certificate..."
+    echo -e "${LCYAN}Retrieving possibly approved certificate..."
+
     echo -e "Check CSR status...${NC}"
     CSRSTATUS=X
     CSRSTATUS=$(kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.conditions[0].type}") 
     if [ "X${CSRSTATUS}" == "XApproved" ]; then
-        echo -e "Congatulations ! Your request for a certificate has been approved :-)"
-        echo -e "Retrieving signed certificate in file ${CERTFILE}.cer..."
+        echo -e "\n${LCYAN}Congatulations ! Your request for a certificate has been approved :-)"
+        echo -e "Retrieving signed certificate in file ${LGRAY}${CERTFILE}...${NC}"
         kubectl get csr ${K8SREQNAME} -o=jsonpath="{.status.certificate}" | base64 --decode >${CERTFILE}
 
         chown ${OWNER}:${GRP} ${CERTFILE} 
@@ -342,8 +355,7 @@ function CreateKubeconfigFile () {
         exit 0
     fi
 
-    echo -e "Preparing kubeconfig file..."
-    #kubectl config set-cluster ${K8SCLUSTERNAME} --server=${K8SAPISERVERURL} \
+    echo -e "\n${LCYAN}Preparing kubeconfig file..."
     kubectl config --kubeconfig ${CNKUBECONFIG} set-cluster ${K8SCLUSTERNAME} --server=${K8SAPISERVERURL} \
 	                                                                      --certificate-authority ${CACERTFILE} \
 				                                              --embed-certs=true
@@ -355,20 +367,21 @@ function CreateKubeconfigFile () {
         exit 0
     fi
 
-    #kubectl config set-credentials ${CN} --client-key=${PRIVATEKEYFILE} \
     kubectl config --kubeconfig ${CNKUBECONFIG} set-credentials ${CN} --client-key=${PRIVATEKEYFILE} \
     	                                                              --client-certificate=${CERTFILE} \
 				                                      --embed-certs=true
-    #kubectl config set-context ${CN} --cluster=${K8SCLUSTERNAME} --user=${CN}
     kubectl config --kubeconfig ${CNKUBECONFIG} set-context ${CN} --cluster=${K8SCLUSTERNAME} --user=${CN}
     kubectl config --kubeconfig ${CNKUBECONFIG} use-context ${CN} --cluster=${K8SCLUSTERNAME} --user=${CN}
 
-    echo -e "${LCYAN}Please, provide the user with ${CNKUBECONFIG} and ask him to use it as kubernetes client config file.
+    echo -e "\n${LCYAN}Please, provide the user with ${LGRAY}${CNKUBECONFIG}${LCYAN}."
+    echo -e "${BRORANGE}This file contains sensitive credentials; please, instruct users to carefully protect such files."
+    echo -e "${LCYAN}Please, instruct him to use it as kubernetes client config file.
              The following syntax could be used :${NC}
-             ${CYAN}kubectl config --kubeconfig ${CNKUBECONFIG} <command> 
-	     ${NC}"
-    echo -e "${LCYAN}Instead of using --kubeconfig, she may also move this file into ${LGRAY} ~/.kube/config && chmod 600 $~/.kube/config${NC}"
-    echo -e "${LCYAN}or point the variable KUBECONFIG to this file${NC}"
+             ${LGRAY}kubectl --kubeconfig ${CNKUBECONFIG} <command>\n"
+    echo -e "${LCYAN}Instead of using ${LGRAY}--kubeconfig ${LCYAN}with each kubectl command, she may :"
+    echo -e "    move this file into ${LGRAY} ~/.kube/config chmod 600 $~/.kube/config"
+    echo -e "    ${LCYAN}then ${LGRAY}chmod 600 $~/.kube/config"
+    echo -e "    ${LCYAN}or point the variable ${LGRAY}KUBECONFIG ${LCYAN}to this file${NC}"
 }
 
 ########################################
@@ -387,12 +400,16 @@ if [ "X${INPUTFILE}" != "X" ]; then
     USERSLIST=$(cat ${INPUTFILE})
 
     for LINE in ${USERSLIST}; do
-        echo -e "${LCYAN}Processing ${LINE}${NC}"
+        echo -e "${LCYAN}Processing ${LGRAY}${LINE}${NC}"
 
 	CN=$(echo ${LINE} | awk -F"\;" '{print $1}')
 	ORG=$(echo ${LINE} | awk -F"\;" '{print $2}')
 
-	${0} -c ${CN} -o ${ORG} -s -a -r
+	if [ "${DELETECSR}" == "yes" ]; then
+	    ${0} -c ${CN} -o ${ORG} -s -a -r -d
+	else
+	    ${0} -c ${CN} -o ${ORG} -s -a -r
+	fi
 
     done
     exit 0

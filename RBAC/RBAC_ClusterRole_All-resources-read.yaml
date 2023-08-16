@@ -1,0 +1,75 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cr-allresources-read
+# namespace: default
+rules:
+  - apiGroups: ["extensions",""]
+    resources: ["apiservices", "componentstatuses", "controllerrevisions", "customresourcedefinitions","nodes"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["extensions",""]
+    resources: ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"]
+    verbs: ["get", "list"]
+
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+
+  - apiGroups: [""]
+    resources: ["certificatesigningrequests"]
+    verbs: ["get", "list"]
+
+  - apiGroups: [""]
+    resources: ["clusterroles", "clusterrolebinding.", "role.", "rolebinding"]
+    verbs: ["get", "list"]
+
+  - apiGroups: [""]
+    resources: ["clusterroles", "clusterrolebinding.", "role.", "rolebinding"]
+    verbs: ["get", "list"]
+
+  - apiGroups: [""]
+    resources: ["clusterroles", "clusterrolebinding.", "localsubjectaccessreviews", "role.", "rolebinding", "subjectaccessreviews", "tokenreviews"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["apps", ""]
+    resources: ["configmaps", "cronjobs", "daemonsets", "deployments", "jobs", "pods", "podtemplates", "replicasets", "services", "statefulsets", "persistentvolumeclaims"]
+    verbs: ["get", "list"]
+
+  - apiGroups: [""]
+    resources: ["secrets", "serviceaccounts"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["apps", ""]
+    resources: ["csidrivers", "csinodes", "csistoragecapacities", "persistentvolumes", "storageclasses", "volumeattachments"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["apps", ""]
+    resources: ["limitranges", "resourcequotas", ]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["apps", ""]
+    resources: ["networkpolicies", "ingresses", "ingressclasses"]
+    verbs: ["get", "list"]
+
+  # Calico specific
+  - apiGroups: ["crd.projectcalico.org"]
+    resources: ["bgpconfigurations", "bgpfilters", "bgppeers", "blockaffinities", "caliconodestatuses", "clusterinformations", "felixconfigurations", "globalnetworkpolicies", "globalnetworksets", "hostendpoints", "ipamblocks", "ipamconfigs", "ipamhandles", "ippools", "ipreservations", "kubecontrollersconfigurations", "networkpolicies", "networksets"]
+    verbs: ["get", "list"]
+
+
+#
+# Other resources to classify
+#
+#endpoints
+#endpointslices
+#events
+#events
+#flowschemas
+#horizontalpodautoscalers
+#leases
+#poddisruptionbudgets
+#priorityclasses
+#prioritylevelconfigurations
+#replicationcontrollers
+#runtimeclasses
