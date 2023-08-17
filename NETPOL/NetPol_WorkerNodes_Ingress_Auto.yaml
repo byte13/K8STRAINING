@@ -1,0 +1,32 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: gnp-workrnodes-ingress 
+spec:
+  selector: has(worker-node)
+   # Allow all traffic to localhost.
+  ingress:
+  - action: Allow
+    destination:
+      nets:
+      - 127.0.0.0/8
+   # Allow only the masters access to the nodes kubelet API.
+  - action: Allow
+    protocol: TCP
+    source:
+      selector: has(worker-node)
+    destination:
+      ports:
+      - 10250
+   - action: Allow
+      protocol: TCP
+      source:
+        nets:
+          # Legitimate source subnet(s), loadbalancer(s), WAF, APIGW, etc. 
+          - '10.13.4.1/24'
+          # Management workstation
+          - '10.13.3.2/32'
+      destination:
+        # Ingress ports
+        ports: [80, 443]
+        # For NodePort trafics, pre-DNAT rule are requires. See NetPol_WorkerNodes_Ingress-NodePort_Auto.yaml

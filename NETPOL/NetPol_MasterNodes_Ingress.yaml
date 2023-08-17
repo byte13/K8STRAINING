@@ -1,0 +1,49 @@
+#
+# Note that this policy required explicit definition of HostEndPoint objects representing each respective Kubernetes host
+# 
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: gnp-k8smasternode
+spec:
+  selector: "role == 'masternode'"
+  order: 0
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        nets:
+          # Management workstation
+          - '10.13.3.2/32'
+      destination:
+        # SSH and APIserver
+        ports: [22, 6443]
+    - action: Allow
+      protocol: TCP
+      source:
+        nets:
+          # Kubernetes cluster subnet 
+          - '10.13.4.0/24'
+      destination:
+        # APIserver
+        ports: [6443]
+    - action: Allow
+      protocol: TCP
+      source:
+        nets:
+          # Masternode 
+          - '10.13.4.1/32'
+      destination:
+        # etcd 
+        ports: [2379, 2380]
+    - action: Allow
+      protocol: ICMP
+    - action: Allow
+      protocol: TCP
+      source:
+        nets:
+          # Masternode 
+          - '10.13.4.1/32'
+      destination:
+        # Kubelet
+        ports: [10250, 10256]
