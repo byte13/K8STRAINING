@@ -1,0 +1,49 @@
+#
+# Out of https://docs.tigera.io/calico/latest/network-policy/hosts/protect-hosts-tutorial
+#     We use pre-DNAT policy for these purposes, instead of normal host endpoint policy, because:
+# 
+#     We want the protection against general external traffic to apply regardless of where that traffic is 
+#     destined for - for example, to a locally hosted pod, or to a pod on another node, or to a local server 
+#     process running on the host itself. Pre-DNAT policy is enforced in all of those cases - as we want - whereas 
+#     normal host endpoint policy is not enforced for traffic going to a local pod.
+# 
+#     We want to write this policy in terms of the advertised NodePorts, not in terms of whatever internal port 
+#     numbers those may be transformed to. kube-proxy on the ingress node will use a DNAT to change a NodePort number 
+#     and IP address to those of one of the pods that backs the relevant Service. Our policy therefore needs to take 
+#     effect before that DNAT - and that means that it must be a pre-DNAT policy.
+#
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: gnp-ingress-nodeports 
+spec:
+  order: 10
+  preDNAT: true
+  applyOnForward: true
+  ingress:
+    - action: Allow
+      source:
+        nets: [10.13.0.0/16]
+  selector: has(endpoint-worker-node)
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: gnp-drop-other-ingress
+spec:
+  order: 20
+  preDNAT: true
+  applyOnForward: true
+  ingress:
+    - action: Deny
+  selector: has(worker-node)
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: gnp-allow-outbound-external
+spec:
+  order: 10
+  egress:
+    - action: Allow
+  selector: has(endpoint-worker-node)
