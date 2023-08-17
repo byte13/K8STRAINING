@@ -36,7 +36,7 @@ spec:
   applyOnForward: true
   ingress:
     - action: Deny
-  selector: has(worker-node)
+  selector: "role == 'hostendpoint-workernode'" 
 ---
 apiVersion: projectcalico.org/v3
 kind: GlobalNetworkPolicy
@@ -46,4 +46,4 @@ spec:
   order: 10
   egress:
     - action: Allow
-  selector: has(endpoint-worker-node)
+  selector: "role == 'hostendpoint-workernode'" 

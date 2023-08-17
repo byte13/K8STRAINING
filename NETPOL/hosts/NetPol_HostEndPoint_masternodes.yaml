@@ -3,7 +3,7 @@ kind: HostEndpoint
 metadata:
   name: winux041-enp0s3
   labels:
-    role: k8s-masternode
+    role: hostendpoint-masternode
     environment: lab
 spec:
   interfaceName: enp0s3
