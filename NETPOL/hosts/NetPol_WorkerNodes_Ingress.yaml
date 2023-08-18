@@ -6,7 +6,7 @@ kind: GlobalNetworkPolicy
 metadata:
   name: gnp-k8sworkernode
 spec:
-  selector: "role == 'hostendpoint-workernode'"
+  selector: "hostend-point == 'workernode'"
   order: 0
   ingress:
     - action: Allow

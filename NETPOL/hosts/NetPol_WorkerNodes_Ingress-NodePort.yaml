@@ -1,5 +1,5 @@
 #
-# Out of https://docs.tigera.io/calico/latest/network-policy/hosts/protect-hosts-tutorial
+# According to https://docs.tigera.io/calico/latest/network-policy/hosts/protect-hosts-tutorial
 #     We use pre-DNAT policy for these purposes, instead of normal host endpoint policy, because:
 # 
 #     We want the protection against general external traffic to apply regardless of where that traffic is 
@@ -12,18 +12,21 @@
 #     and IP address to those of one of the pods that backs the relevant Service. Our policy therefore needs to take 
 #     effect before that DNAT - and that means that it must be a pre-DNAT policy.
 #
+
+# Allow trafics to Node Ports from Pods, only
 apiVersion: projectcalico.org/v3
 kind: GlobalNetworkPolicy
 metadata:
   name: gnp-ingress-nodeports 
 spec:
+  # First allow Pods addresses...
   order: 10
   preDNAT: true
   applyOnForward: true
   ingress:
     - action: Allow
       source:
-        nets: [10.13.0.0/16]
+        nets: [10.100.0.0/16]
   selector: has(endpoint-worker-node)
 ---
 apiVersion: projectcalico.org/v3
@@ -31,6 +34,7 @@ kind: GlobalNetworkPolicy
 metadata:
   name: gnp-drop-other-ingress
 spec:
+  # ...then deny
   order: 20
   preDNAT: true
   applyOnForward: true
@@ -38,12 +42,30 @@ spec:
     - action: Deny
   selector: "role == 'hostendpoint-workernode'" 
 ---
+# Allow NodePorts to connect outside 
 apiVersion: projectcalico.org/v3
 kind: GlobalNetworkPolicy
 metadata:
-  name: gnp-allow-outbound-external
+  name: gnp-allow-outbound
 spec:
   order: 10
   egress:
     - action: Allow
+  selector: "role == 'hostendpoint-workernode'" 
+---
+# Finally, alow access from outside to NodePort
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: gnp-allow2nodeport
+spec:
+  preDNAT: true
+  applyOnForward: true
+  order: 10
+  ingress:
+    - action: Allow
+      protocol: TCP
+      destination:
+        selector: "role == 'hostendpoint-workernode'" 
+        ports: [31852]
   selector: "role == 'hostendpoint-workernode'" 

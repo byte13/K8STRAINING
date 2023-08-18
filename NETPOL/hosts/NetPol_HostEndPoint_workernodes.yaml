@@ -3,8 +3,7 @@ kind: HostEndpoint
 metadata:
   name: winux042-enp0s3
   labels:
-    role: hostendpoint-workernode 
-    environment: lab
+    host-endpoint: workernode 
 spec:
   interfaceName: enp0s3
   node: winux042-host
@@ -15,7 +14,7 @@ kind: HostEndpoint
 metadata:
   name: winux043-enp0s3
   labels:
-    role: hostendpoint-workernode 
+    host-endpoint: workernode 
     environment: lab
 spec:
   interfaceName: enp0s3

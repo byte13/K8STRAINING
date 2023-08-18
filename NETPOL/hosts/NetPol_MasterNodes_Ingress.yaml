@@ -6,7 +6,7 @@ kind: GlobalNetworkPolicy
 metadata:
   name: gnp-k8smasternode
 spec:
-  selector: "role == 'hostendpoint-masternode'"
+  selector: "host-endpoint == 'masternode'"
   order: 0
   ingress:
     - action: Allow
