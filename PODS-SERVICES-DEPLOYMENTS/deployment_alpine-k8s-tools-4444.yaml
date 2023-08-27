@@ -6,7 +6,7 @@ metadata:
     app: backendpod-4444 
   #namespace: project2ns 
 spec:
-  replicas: 1 
+  replicas: 2
   selector:
     matchLabels:
       app: backendpod-4444 
@@ -30,4 +30,4 @@ spec:
         # Just spin & wait forever doing nothing usefull
         #args: [ "while true; do sleep 30; done" ]
       nodeSelector:
-        kubernetes.io/hostname: winux042.lab.byte13.org
+        kubernetes.io/hostname: k8sworker12.lab.byte13.org

@@ -6,7 +6,7 @@ metadata:
     app: frontendpod-1111 
   #namespace: project1ns 
 spec:
-  replicas: 1 
+  replicas: 2
   selector:
     matchLabels:
       app: frontendpod-1111 
@@ -29,4 +29,4 @@ spec:
         securityContext:
           privileged: true
       nodeSelector:
-        kubernetes.io/hostname: winux043.lab.byte13.org
+        kubernetes.io/hostname: k8sworker11.lab.byte13.org

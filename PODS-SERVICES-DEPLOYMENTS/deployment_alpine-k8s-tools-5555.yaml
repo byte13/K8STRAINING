@@ -29,4 +29,4 @@ spec:
         securityContext:
           privileged: true
       nodeSelector:
-        kubernetes.io/hostname: winux043.lab.byte13.org
+        kubernetes.io/hostname: k8sworker11.lab.byte13.org

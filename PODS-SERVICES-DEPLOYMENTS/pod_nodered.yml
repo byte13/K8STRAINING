@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: nodered-pod
   labels:
-    app: b13-nodered
+    app: default 
 spec:
   containers:
   - name: nodered-container

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np-haproxy-to-frontends
+spec:
+  policyTypes:
+  - Ingress
+  podSelector: {}
+    #matchLabels:
+    #   netzone: frontend
+  ingress:
+  - from:
+    - namespaceSelector: {}
+      podSelector: {}
+        #matchLabels:
+        #  app.kubernetes.io/name: haproxy-ingress
+    ports:
+    - protocol: TCP
+      port: 1111
+    - protocol: TCP
+      port: 3333

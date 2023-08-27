@@ -1,10 +1,10 @@
 apiVersion: projectcalico.org/v3
 kind: HostEndpoint
 metadata:
-  name: winux041-enp0s3
+  name: k8smaster10-enp0s3
   labels:
     host-endpoint: masternode 
 spec:
   interfaceName: enp0s3
-  node: winux041-host
+  node: k8smaster10-host
   expectedIPs: ['10.13.4.1']

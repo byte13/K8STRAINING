@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-frontendpod-3333-with-enterprise-cert
+  annotations:
+    load-balance: random 
+spec:
+  ingressClassName: haproxy
+  tls:
+  - secretName: haprx1-cert
+    hosts:
+    - "haprx1.lab.byte13.org"
+  rules:
+  - host: "haprx1.lab.byte13.org"
+    http:
+      paths:
+      - path: /frontend-3333
+        pathType: Prefix
+        backend:
+          service:
+            name: service-alpine-k8s-tools-3333 
+            port:
+              number: 3333

@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: b13-alpine-nettools-3333
-  namespace: b13-ns1
+  name: service-alpine-k8s-tools-3333
+    #namespace: default
 spec:
-  type: NodePort
-  externalTrafficPolicy: Cluster
+  #type: NodePort
+  #externalTrafficPolicy: Cluster
+  type: ClusterIP
   selector:
-    app: b13-alpine-nettools-3333
+    app: frontendpod-3333 
   ports: 
     - protocol: TCP
       port: 3333
