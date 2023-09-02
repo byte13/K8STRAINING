@@ -11,5 +11,3 @@ spec:
     ports:
     - containerPort: 1234
     command: [ "/K8SLAB/ncwebsrv.sh", "1234" ]
-    securityContext:
-      privileged: true

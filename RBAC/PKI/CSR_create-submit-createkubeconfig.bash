@@ -41,7 +41,7 @@ RSAKEYLENGTH=2048
 # Kubernetes API server information to be used to submit, approve and retrieve cluster certificates 
 K8SCLUSTERNAME="kubernetes"
 K8SAPISERVERFQDN="k8smaster10.lab.byte13.org"
-K8SAPISERVERIP="10.13.4.1"
+K8SAPISERVERIP="10.13.4.10"
 K8SAPISERVERPORT="6443"
 K8SAPISERVERURL="https://${K8SAPISERVERIP}:${K8SAPISERVERPORT}"
 
