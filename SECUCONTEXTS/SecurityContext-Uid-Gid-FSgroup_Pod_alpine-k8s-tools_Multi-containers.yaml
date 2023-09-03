@@ -13,8 +13,10 @@ spec:
     fsGroup: 2000
 
   containers:
-  - name: frontendpod-capabilities-5555 
+  - name: frontendpod-5555 
     image: docker.io/byte13/alpine-k8s-tools 
+    #imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 5555
     command: [ "/K8SLAB/ncwebsrv.sh", "5555" ]
@@ -25,12 +27,16 @@ spec:
 
   - name: frontendpod-6666 
     image: docker.io/byte13/alpine-k8s-tools
+    #imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 6666
     command: [ "/K8SLAB/ncwebsrv.sh", "6666" ]
 
   - name: frontendpod-privileged-7777 
     image: docker.io/byte13/alpine-k8s-tools
+    #imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 7777
     command: [ "/K8SLAB/ncwebsrv.sh", "7777" ]

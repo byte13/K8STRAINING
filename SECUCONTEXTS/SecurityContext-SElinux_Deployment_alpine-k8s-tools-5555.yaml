@@ -18,9 +18,9 @@ spec:
     spec:
       containers:
       - name: frontendpod-selinux-5555 
-        imagePullPolicy: Always
-        #imagePullPolicy: IfNotPresent
         image: docker.io/byte13/alpine-k8s-tools
+        #imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5555
         command: [ "/K8SLAB/ncwebsrv.sh", "5555" ]
@@ -28,7 +28,7 @@ spec:
 
         securityContext:
           seLinuxOptions:
-            level: "s0:c123:c456"
+            level: "s0:c123,c456"
               
       nodeSelector:
         kubernetes.io/hostname: k8sworker11.lab.byte13.org

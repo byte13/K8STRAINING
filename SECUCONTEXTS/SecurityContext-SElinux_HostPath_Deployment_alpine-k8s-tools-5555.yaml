@@ -4,11 +4,10 @@ metadata:
   name: frontendpod-selinux-hostvol-5555
   labels:
     app: frontendpod-selinux-hostvol-5555 
-  #namespace: project1ns 
 spec:
   replicas: 1 
   selector:
-    elinuxatchLabels:
+    matchLabels:
       app: frontendpod-selinux-hostvol-5555 
   template:
     metadata:
@@ -19,8 +18,8 @@ spec:
     spec:
       containers:
       - name: frontendpod-selinux-hostvol-5555 
-        imagePullPolicy: Always
-        #imagePullPolicy: IfNotPresent
+        #imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         image: docker.io/byte13/alpine-k8s-tools
         ports:
         - containerPort: 5555
@@ -28,8 +27,12 @@ spec:
         #args: [ "while true; do cat /B13/HTML/index.html | nc -l -p 5555; done" ]
 
         securityContext:
+          runAsUser: 1234
+          runAsGroup: 4321
+
           seLinuxOptions:
-            level: "s0:c123:c456"
+            type: "frontendpod-selinux-hostvol.process"
+            level: "s0:c123,c456"
 
         volumeMounts:
         - mountPath: /K8SHOSTDIR
@@ -39,8 +42,8 @@ spec:
         hostPath:
           # directory location on host
           path: /K8SLAB
-          # this field is optional
-          type: Directory
+          type: DirectoryOrCreate
+          #type: Directory
               
       nodeSelector:
         kubernetes.io/hostname: k8sworker11.lab.byte13.org
