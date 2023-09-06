@@ -8,6 +8,7 @@ spec:
   containers:
   - name: frontendpod-1111 
     image: docker.io/byte13/alpine-k8s-tools 
+    imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 1111
     command: [ "/K8SLAB/ncwebsrv.sh", "1111" ]
