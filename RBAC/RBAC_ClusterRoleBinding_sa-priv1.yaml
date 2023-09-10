@@ -5,7 +5,7 @@ metadata:
   #namespace: default
 subjects:
   - kind: ServiceAccount
-    name: system:serviceaccount:project1ns:sa-priv1 
+    name: sa-priv1 
     namespace: project1ns
     apiGroup: ""
 roleRef:

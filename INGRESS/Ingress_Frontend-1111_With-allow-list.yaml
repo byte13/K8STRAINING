@@ -4,7 +4,8 @@ metadata:
   name: ingress-frontendpod-1111
   annotations:
     load-balance: random
-    allow-list: "10.13.4.2/32,10.1.2.0/24"
+    haproxy.org/allow-list: "10.13.3.100/32"
+    #haproxy.org/deny-list: "10.13.3.2/32"
 spec:
   ingressClassName: haproxy
   rules:

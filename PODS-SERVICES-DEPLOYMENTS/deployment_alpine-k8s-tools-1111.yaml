@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: frontendpod-1111 
-        #imagePullPolicy: Always
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
+          #imagePullPolicy: IfNotPresent
         image: docker.io/byte13/alpine-k8s-tools
         ports:
         - containerPort: 1111

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontendpod-privileged-5555
+  labels:
+    app: frontendpod-privileged-5555 
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontendpod-privileged-5555 
+  template:
+    metadata:
+      labels:
+        app: frontendpod-privileged-5555 
+        netzone: frontend
+    spec:
+      containers:
+      - name: frontendpod-privileged-5555 
+        #imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
+        image: docker.io/byte13/alpine-k8s-tools
+        ports:
+        - containerPort: 5555
+        command: [ "/K8SLAB/ncwebsrv.sh", "5555" ]
+
+        securityContext:
+          privileged: true
+
+      nodeSelector:
+        kubernetes.io/hostname: k8sworker11.lab.byte13.org

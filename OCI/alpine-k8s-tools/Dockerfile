@@ -21,7 +21,7 @@ RUN mkdir -p /K8SHOSTDIR && chmod 750 /K8SHOSTDIR && chown poduser1:podgroup1 /K
 # Install Peirates
 RUN mkdir -p /K8SLAB && \
     cd /K8SLAB && \
-    wget https://github.com/inguardians/peirates/releases/download/v1.1.12/peirates-linux-amd64.tar.xz && \
+    wget https://github.com/inguardians/peirates/releases/download/v1.1.13/peirates-linux-amd64.tar.xz && \
     tar xvf peirates-linux-amd64.tar.xz && \
     rm -f peirates-linux-amd64.tar.xz
 
@@ -31,6 +31,8 @@ RUN chmod 750 /K8SLAB/ncwebsrv.sh && chown -R poduser1:podgroup1 /K8SLAB
 
 COPY kubectl /K8SLAB/kubectl
 RUN chmod 750 /K8SLAB/kubectl && chown -R poduser1:podgroup1 /K8SLAB
+
+#USER poduser1:podgroup1
 
 WORKDIR /K8SLAB
 
