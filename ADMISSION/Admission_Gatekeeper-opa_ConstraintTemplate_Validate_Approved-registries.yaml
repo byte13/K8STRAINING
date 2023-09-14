@@ -1,0 +1,53 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+ name: opa-ct-approvedregistries
+spec:
+ crd:
+  spec:
+   names:
+    kind: opa-crd-approved-registries
+    listKind: ApprovedRegistriesList 
+    plural: approved-registries
+    singular: approved-registries
+   validation:
+    # Schema for the `parameters` field
+    openAPIV3Schema:
+     properties:
+      privilegedusers:
+       type: array
+       items: string
+      approvedregistries:
+       type: array
+       items: string
+ targets:
+   - target: admission.k8s.gatekeeper.sh
+     rego: |
+       package approved-registries.opa.byte13.org
+
+       privuser(user, userlist) {
+         some i
+         userlist[i] == user
+       }
+
+       approvedregistry(image, registries) {
+         some i
+         startswith(image, registries[i])
+       }
+
+       violation[{"msg": msg}] {
+         # check if user is privileged
+         userslist := input.parameters.privilegedusers
+         user := input.review.userInfo.username
+         not privuser(user, userslist)
+ 
+         # Check image registry
+         input.review.kind.kind == "Pod"
+         registries := input.parameters.approvedregistries
+         some i
+         image := input.review.object.spec.containers[i].image
+         not approvedregistry(image, registries)
+
+         # Message in case of violation
+         msg := sprintf("Dear %v, image %v comes from an untrusted registry; trusted registries are: %v", [user, image, registries])
+       }

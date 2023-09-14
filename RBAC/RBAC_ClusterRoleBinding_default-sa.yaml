@@ -6,7 +6,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: project1ns
+    namespace: default
     apiGroup: ""
 roleRef:
   kind: ClusterRole

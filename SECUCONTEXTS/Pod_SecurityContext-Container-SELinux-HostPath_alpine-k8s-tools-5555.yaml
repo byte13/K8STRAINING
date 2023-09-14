@@ -22,7 +22,7 @@ spec:
       runAsGroup: 4321
 
       seLinuxOptions:
-        type: "frontendpod-selinux-hostvol.process"
+        type: "frontendpod-selinux-hostvol-5555.process"
         level: "s0:c123,c456"
 
     volumeMounts:
