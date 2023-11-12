@@ -4,7 +4,8 @@ metadata:
   name: ingress-tls-ipfilter-frontendpod-1111
   annotations:
     haproxy-ingress.github.io/load-balance: random
-    haproxy-ingress.github.io/allowlist-source-range: "10.13.3.100/32,10.1.2.0/24"
+    #haproxy-ingress.github.io/allowlist-source-range: "10.13.3.100/32,10.1.2.0/24"
+    haproxy-ingress.github.io/allowlist-source-range: "10.13.3.2/32,10.1.2.0/24"
 spec:
   ingressClassName: haproxy
   tls:

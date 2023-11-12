@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontendpod-apparmor-5555
+  labels:
+    app: frontendpod-apparmor-5555
+    netzone: frontend
+  annotations:
+    # Using Apparmor still requires annotations instead of securityContext
+    # Tell Kubernetes to apply the AppArmor profile "k8s-apparmor-example-deny-write".
+    # Note that this is ignored if the Kubernetes node is not running version 1.4 or greater.
+    container.apparmor.security.beta.kubernetes.io/frontendpod-apparmor-5555: localhost/k8s-apparmor-example-deny-write
+
+spec:
+  containers:
+  - name: frontendpod-apparmor-5555
+    #imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
+    image: docker.io/byte13/alpine-k8s-tools
+    ports:
+    - containerPort: 5555
+    command: [ "/K8SLAB/ncwebsrv.sh", "5555" ]
+
+  nodeSelector:
+    kubernetes.io/hostname: k8sworker11.lab.byte13.org
