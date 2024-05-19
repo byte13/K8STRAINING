@@ -1,0 +1,420 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsa1ee2c3785
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: POST
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsa1ee2c3685
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/pet$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: PUT
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets6ad8569918
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/pet$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets8e10dba9e4
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/pet/findByStatus$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets51128d263e
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/pet/findByTags$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: DELETE
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets1ea591725d
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/pet/(?<petId>[^#?/]+)$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets0a5ffbd10f
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/pet/(?<petId>[^#?/]+)$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: POST
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets536f54b865
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/pet/(?<petId>[^#?/]+)$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: POST
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsa7d1b21a9e
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/pet/(?<petId>[^#?/]+)/uploadImage$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsd8db5230d8
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/store/inventory$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: POST
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsbbbe3ffebd
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/store/order$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: DELETE
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsa359adac4a
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/store/order/(?<orderId>[^#?/]+)$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets4901beaa67
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/store/order/(?<orderId>[^#?/]+)$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: POST
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets457ac46cf3
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/user$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: POST
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petscffe55debc
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/user/createWithList$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets9200240982
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/user/login$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets47ca0564da
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/user/logout$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: DELETE
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petse2444b44d9
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/user/(?<username>[^#?/]+)$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: GET
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsb0eb1855d5
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/user/(?<username>[^#?/]+)$
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    konghq.com/methods: PUT
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsb9b40e0a5d
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /~/user/(?<username>[^#?/]+)$
+        pathType: ImplementationSpecific
+---

@@ -12,7 +12,7 @@ spec:
     ports:
     - containerPort: 2222
     command: [ "/K8SLAB/ncwebsrv.sh", "2222" ]
-    securityContext:
-      privileged: true
+    #securityContext:
+    #  privileged: true
   nodeSelector:
     kubernetes.io/hostname: k8sworker12.lab.byte13.org

@@ -1,0 +1,380 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsa1ee2c3685
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: POST
+      path:
+        type: RegularExpression
+        value: /pet$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets6ad8569918
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: PUT
+      path:
+        type: RegularExpression
+        value: /pet$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets8e10dba9e4
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: GET
+      path:
+        type: RegularExpression
+        value: /pet/findByStatus$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets51128d263e
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: GET
+      path:
+        type: RegularExpression
+        value: /pet/findByTags$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets1ea591725d
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: DELETE
+      path:
+        type: RegularExpression
+        value: /pet/(?<petId>[^#?/]+)$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets0a5ffbd10f
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: GET
+      path:
+        type: RegularExpression
+        value: /pet/(?<petId>[^#?/]+)$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets536f54b865
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: POST
+      path:
+        type: RegularExpression
+        value: /pet/(?<petId>[^#?/]+)$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsa7d1b21a9e
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: POST
+      path:
+        type: RegularExpression
+        value: /pet/(?<petId>[^#?/]+)/uploadImage$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsd8db5230d8
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: GET
+      path:
+        type: RegularExpression
+        value: /store/inventory$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsbbbe3ffebd
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: POST
+      path:
+        type: RegularExpression
+        value: /store/order$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsa359adac4a
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: DELETE
+      path:
+        type: RegularExpression
+        value: /store/order/(?<orderId>[^#?/]+)$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets4901beaa67
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: GET
+      path:
+        type: RegularExpression
+        value: /store/order/(?<orderId>[^#?/]+)$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets457ac46cf3
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: POST
+      path:
+        type: RegularExpression
+        value: /user$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petscffe55debc
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: POST
+      path:
+        type: RegularExpression
+        value: /user/createWithList$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets9200240982
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: GET
+      path:
+        type: RegularExpression
+        value: /user/login$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "200"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-pets47ca0564da
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: GET
+      path:
+        type: RegularExpression
+        value: /user/logout$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petse2444b44d9
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: DELETE
+      path:
+        type: RegularExpression
+        value: /user/(?<username>[^#?/]+)$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsb0eb1855d5
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: GET
+      path:
+        type: RegularExpression
+        value: /user/(?<username>[^#?/]+)$
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    konghq.com/regex-priority: "100"
+    konghq.com/strip-path: "false"
+  name: swagger-petstore---openapi-3-0-swagger-petsb9b40e0a5d
+spec:
+  parentRefs:
+  - name: kong
+  rules:
+  - backendRefs:
+    - name: Swagger_Petstore_-_OpenAPI_3_0
+      port: 443
+    matches:
+    - method: PUT
+      path:
+        type: RegularExpression
+        value: /user/(?<username>[^#?/]+)$
+---

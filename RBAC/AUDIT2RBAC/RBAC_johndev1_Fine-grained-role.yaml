@@ -7,22 +7,22 @@ metadata:
     audit2rbac.liggitt.net/generated: "true"
     audit2rbac.liggitt.net/user: johndev1
   name: audit2rbac:johndev1
-  namespace: project3ns
+  namespace: project22ns
 rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - frontendpod-1111
+  resources:
+  - pods
+  verbs:
+  - get
 - apiGroups:
   - ""
   resourceNames:
   - service-alpine-k8s-tools-1111
   resources:
   - services
-  verbs:
-  - get
-- apiGroups:
-  - apps
-  resourceNames:
-  - frontendpod-1111
-  resources:
-  - deployments
   verbs:
   - get
 ---
@@ -42,14 +42,6 @@ rules:
   - namespaces
   verbs:
   - create
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -60,7 +52,7 @@ metadata:
     audit2rbac.liggitt.net/generated: "true"
     audit2rbac.liggitt.net/user: johndev1
   name: audit2rbac:johndev1
-  namespace: project3ns
+  namespace: project22ns
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

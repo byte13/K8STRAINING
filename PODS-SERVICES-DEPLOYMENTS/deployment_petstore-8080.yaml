@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petstore-8080 
+  labels:
+    app: petstore-8080 
+  #namespace: petstorens 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: petstore-8080 
+  template:
+    metadata:
+      labels:
+        app: petstore-8080 
+        project: petstore
+        netzone: frontend
+    spec:
+      containers:
+      - name: petstore-8080 
+        #imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
+        image: swaggerapi/petstore3:unstable 
+        ports:
+        - containerPort: 8080
+      #nodeSelector:
+        #kubernetes.io/hostname: k8sworker12.lab.byte13.org

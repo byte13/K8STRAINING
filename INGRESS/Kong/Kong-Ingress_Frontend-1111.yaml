@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-frontend-1111
+  annotations:
+    konghq.com/strip-path: 'true'
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /frontend-1111 
+        #pathType: PathPrefix 
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: service-alpine-k8s-tools-1111 
+            port:
+              number: 1111
