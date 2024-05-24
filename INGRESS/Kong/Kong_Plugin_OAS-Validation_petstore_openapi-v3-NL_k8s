@@ -3,20 +3,20 @@ kind: KongPlugin
 metadata:
  name: oas-validation-petstore
 plugin: oas-validation
-config: #{
- #"notify_only_request_validation_failure": false,
- #"validate_request_body": true,
- #"validate_request_header_params": true,
- #"validate_request_query_params": true,
- #"validate_request_uri_params": true,
- #"validate_response_body": false,
- #"notify_only_response_body_validation_failure": false,
- #"query_parameter_check": false,
- #"header_parameter_check": false,
- #"allowed_header_parameters ": Host,Content-Type,User-Agent,Accept,Content-Length,
- #"include_base_path": false,
- #"api_spec_encoded": true,
- api_spec: |
+config: {
+ "notify_only_request_validation_failure": false,
+ "validate_request_body": true,
+ "validate_request_header_params": true,
+ "validate_request_query_params": true,
+ "validate_request_uri_params": true,
+ "validate_response_body": false,
+ "notify_only_response_body_validation_failure": false,
+ "query_parameter_check": false,
+ "header_parameter_check": false,
+ "allowed_header_parameters ": Host,Content-Type,User-Agent,Accept,Content-Length,
+ "include_base_path": false,
+ "api_spec_encoded": true,
+ "api_spec": "|
   {
     "openapi": "3.0.2",
     "info": {
@@ -1243,4 +1243,4 @@ config: #{
       }
     }
   }
-#}
+}

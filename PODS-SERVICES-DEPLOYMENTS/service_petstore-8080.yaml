@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: service-petstore-8080 
   annotations:
-    konghq.com/plugins: 'oas-validation-petstore'
+    konghq.com/plugins: 'oas-validation-petstore,ip-restriction'
 spec:
   #type: NodePort
   #externalTrafficPolicy: Cluster

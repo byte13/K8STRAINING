@@ -1,0 +1,11 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: ip-restrict
+config:
+  allow:
+    #- 10.13.3.0/24 
+    - 10.13.4.0/24 
+  #deny:
+  #  - 0.0.0.0/0
+plugin: ip-restriction
