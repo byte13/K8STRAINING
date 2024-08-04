@@ -1,0 +1,20 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: httproute-http-argocd-server 
+  annotations:
+    konghq.com/strip-path: 'true'
+spec:
+  parentRefs:
+  - name: gateway-kong-http
+  hostnames:
+    - haprx1.lab.byte13.org
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /argocd
+    backendRefs:
+    - name: argocd-server
+      kind: Service
+      port: 80

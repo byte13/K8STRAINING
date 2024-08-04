@@ -4,7 +4,8 @@ metadata:
   name: ingress-ipfilter-frontendpod-3333
   annotations:
     haproxy-ingress.github.io/load-balance: random
-    haproxy-ingress.github.io/allowlist-source-range: "10.13.2.100/32, 10.1.2.3.0/24"
+    #haproxy-ingress.github.io/allowlist-source-range: "10.13.2.100/32, 10.1.2.0/24"
+    haproxy-ingress.github.io/allowlist-source-range: "10.13.3.2/32, 10.1.2.0/24"
 spec:
   ingressClassName: haproxy
   rules:

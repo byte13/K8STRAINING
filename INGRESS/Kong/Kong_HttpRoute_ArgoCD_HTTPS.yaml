@@ -1,18 +1,22 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: httproute-frontend-1111 
+  name: httproute-https-argocd
   annotations:
     konghq.com/strip-path: 'true'
+    #konghq.com/plugins: ipr-argocd
 spec:
   parentRefs:
-  - name: kong-gateway
+  - name: gateway-kong-https
+    sectionName: kong-https
+  hostnames:
+  - haprx1.lab.byte13.org
   rules:
   - matches:
     - path:
         type: PathPrefix
-        value: /frontend-1111
+        value: /
     backendRefs:
-    - name: service-alpine-k8s-tools-1111 
+    - name: argocd-server
       kind: Service
-      port: 1111
+      port: 443
