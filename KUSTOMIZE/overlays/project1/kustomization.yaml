@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: project1 
+
+namespace: project1ns
+
+resources:
+  - back/
+  - front/
+
+labels:
+- includeSelectors: true
+  pairs:
+    projectname: project1
+
+
+

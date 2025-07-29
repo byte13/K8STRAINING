@@ -6,7 +6,8 @@ metadata:
 spec:
   #type: NodePort
   #externalTrafficPolicy: Cluster
-  type: ClusterIP
+  #type: ClusterIP
+  type: NodePort 
   selector:
     app: frontendpod-3333 
   ports: 

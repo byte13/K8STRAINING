@@ -11,8 +11,12 @@ spec:
   egress:
   - to:
     # To intra cluster DNS only
-    # Comment next line out to allow trafics to all external DNS, too.
-    - namespaceSelector: {}
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
     ports:
     - protocol: UDP
       port: 53

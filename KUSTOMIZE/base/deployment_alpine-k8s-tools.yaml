@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl
+  labels:
+    appname: appname
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+        netzone: netzone
+    spec:
+      containers:
+      - name: containername
+        imagePullPolicy: IfNotPresent
+        image: docker.io/byte13/alpine-k8s-tools
+        ports:
+        - containerPort: 9999
+        command:
+          - /K8SLAB/ncwebsrv.sh
+          - 9999

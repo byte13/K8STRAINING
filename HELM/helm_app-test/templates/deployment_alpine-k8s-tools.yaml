@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.podLabels.app }} 
+  labels:
+    app: {{ .Values.podLabels.app }} 
+  namespace: {{ .Values.deployment.namespaceName }} 
+spec:
+  replica.: {{ .Values.deployment.replicaCount }} 
+  selector:
+    matchLabels:
+      app: {{ .Values.podLabels.app }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.podLabels.app }} 
+        project: {{ .Values.podLabels.project }} 
+        netzone: {{ .Values.podLabels.netzone }} 
+    spec:
+      containers:
+      - name: {{ .Values.podLabels.app }} 
+        #imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.image.pullPolicy }} 
+        image: {{ .Values.image.repository }}/{{ .Values.image.name }}
+        ports:
+        - containerPort: {{ .Values.container.port }} 
+        command: [ "/K8SLAB/ncwebsrv.sh", {{ .Values.container.port | quote }} ]
+        securityContext:
+          privileged: {{ .Values.container.privileged }} 
+      nodeSelector:
+        kubernetes.io/hostname: {{ .Values.nodeSelector }} 
