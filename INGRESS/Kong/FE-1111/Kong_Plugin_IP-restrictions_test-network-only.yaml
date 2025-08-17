@@ -1,0 +1,14 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+plugin: ip-restriction 
+metadata:
+ name: ipr-test-network-only
+ namespace: project1ns
+ annotations:
+   kubernetes.io/gateway.class: kong
+config:
+    allow:
+    - 10.13.3.2/32 
+    #deny:
+    #- 0.0.0.0/0
+

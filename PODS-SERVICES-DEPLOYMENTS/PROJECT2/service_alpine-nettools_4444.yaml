@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-alpine-k8s-tools-4444
+  namespace: project2ns
+spec:
+  #type: NodePort
+  #externalTrafficPolicy: Cluster
+  type: ClusterIP
+  selector:
+    app: backendpod-4444 
+  ports: 
+    - protocol: TCP
+      port: 4444
+      targetPort: 4444

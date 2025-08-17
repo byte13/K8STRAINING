@@ -1,13 +1,12 @@
-apiVersion: gateway.networking.k8s.io/v1
+apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: Gateway
-
 metadata:
-  name: gateway-kong-https
-
+  name: gw-haproxy-https
+  #namespace: project1ns
 spec:
-  gatewayClassName: gwclass-kong
+  gatewayClassName: gwclass-haproxy 
   listeners:
-  - name: kong-https
+  - name: listner-haproxy-https
     port: 443
     protocol: HTTPS
     #protocol: TLS
@@ -17,4 +16,4 @@ spec:
       #mode: Passthrough
       certificateRefs:
         - kind: Secret
-          name: haprx1-cert 
+          name: haprx1-cert

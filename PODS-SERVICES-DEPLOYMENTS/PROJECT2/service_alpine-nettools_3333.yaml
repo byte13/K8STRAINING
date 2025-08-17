@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-alpine-k8s-tools-3333
+  namespace: project2ns
+spec:
+  #type: NodePort
+  #externalTrafficPolicy: Cluster
+  #type: ClusterIP
+  type: NodePort 
+  selector:
+    app: frontendpod-3333 
+  ports: 
+    - protocol: TCP
+      port: 3333
+      targetPort: 3333

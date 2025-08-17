@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: HTTPRoute
+metadata:
+  labels:
+    gateway: haproxy-project1
+  name: httproute-http-project1 
+  namespace: project1ns
+spec:
+  parentRefs:
+  - name: gw-haproxy-http
+  #hostnames:
+  #- haprx1.lab.byte13.org 
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /frontend-1111
+    backendRefs:
+    - name: service-alpine-k8s-tools-1111 
+      kind: Service
+      port: 1111

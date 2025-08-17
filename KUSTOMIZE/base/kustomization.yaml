@@ -4,8 +4,6 @@ metadata:
   name: k8straining-base
 
 resources:
-- namespace.yaml
 - deployment_alpine-k8s-tools.yaml 
 - service_alpine-nettools.yaml
-- NetPol_ingress_deny-all.yaml
-- Ingress_Frontend_With-allow-list.yaml
+- netpol_ingress_deny-all.yaml

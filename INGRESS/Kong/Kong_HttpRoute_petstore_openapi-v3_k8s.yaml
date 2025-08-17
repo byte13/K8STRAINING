@@ -8,6 +8,8 @@ metadata:
 spec:
   parentRefs:
   - name: kong
+  hostnames:
+  - "haprx1.lab.byte13.org"
   rules:
   - backendRefs:
     - name: Swagger_Petstore_-_OpenAPI_3_0

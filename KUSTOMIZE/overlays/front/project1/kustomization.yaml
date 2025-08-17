@@ -1,0 +1,89 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: project1-front
+
+resources:
+  - ../../../base/
+  - ingress_Frontend_With-allow-list.yaml
+
+namespace: project1ns
+
+nameSuffix: -frontend-1111
+
+patches:
+  # Json 6902 patch format
+  # https://datatracker.ietf.org/doc/html/rfv6902
+  - target:
+      kind: Deployment
+      name: dpl
+
+    patch: |-
+      #- op: replace
+      #  path: /metadata/name
+      #  value: depl-frontend-1111
+      - op: replace
+        path: /metadata/labels/appname
+        value: app-frontend-1111
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: pod-frontend-1111
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: pod-frontend-1111
+      - op: replace
+        path: /spec/template/metadata/labels/netzone
+        value: frontend
+      - op: replace
+        path: /spec/template/spec/containers/0/name
+        value: cnt-frontend-1111
+      - op: replace
+        path: /spec/template/spec/containers/0/ports/0
+        value:
+          containerPort: 1111
+      - op: replace
+        path: /spec/template/spec/containers/0/command/1
+        value: "1111"
+
+  - target:
+      kind: Service
+      name: svc
+
+    patch: |-
+      #- op: replace
+      #  path: /metadata/name
+      #  value: svc-frontend-1111
+      - op: replace
+        path: /spec/selector/app
+        value: pod-frontend-1111
+      - op: replace
+        path: /spec/ports/0
+        value:
+          port: 1111
+          targetPort: 1111
+      
+  - target:
+      kind: Ingress
+      name: ingress-ipfilter
+
+    patch: |-
+      #- op: replace
+      #  path: /metadata/name
+      #  value: ingress-ipfilter-frontend-1111
+      - op: replace
+        path: /spec/rules/0/http/paths/0/path
+        value: /frontend-1111
+      - op: replace
+        path: /spec/rules/0/http/paths/0/backend/service/name
+        value: svc-frontend-1111
+      - op: replace
+        path: /spec/rules/0/http/paths/0/backend/service/port/number
+        value: 1111
+ 
+ # Strategic merge patch format
+  #- patch: |-
+  #    apiVersion: apps/v1
+  #    kind: Deployment
+  #    metadata:
+  #      name: frontendpod-
+  #    spec:

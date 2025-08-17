@@ -4,10 +4,12 @@ metadata:
   name: k8straining-deployments-ingress
 
 resources:
-- overlays/project1/back
-- overlays/project1/front
+- overlays/back
+- overlays/front
 
 labels:
-- includeSelectors: true
-  pairs:
+- pairs:
     context: k8straining
+  includeSelectors: false
+  includeTemplates: true
+  

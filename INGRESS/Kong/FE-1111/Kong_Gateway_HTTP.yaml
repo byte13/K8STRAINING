@@ -2,8 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: gateway-kong-http
-  # Next line active IP restriction plugin named rule
-  #konghq.com/plugins: ipr-test-network-only
+  namespace: project1ns
 spec:
   gatewayClassName: gwclass-kong
   listeners:
