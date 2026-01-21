@@ -1,0 +1,10 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+#
+# Note that after installation of NGinx Fabric, a gatewayClass is already created and is named "nginx"
+#
+metadata:
+  name: gwclass-nginx
+  # Cluster resource, no namespace
+spec:
+  controllerName: gateway.nginx.org/nginx-gateway-controller 

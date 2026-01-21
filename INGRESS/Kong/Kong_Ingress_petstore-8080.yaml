@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: swagger-petstore---openapi-3-0-swagger-petsa1ee2c3985
+  annotations:
+    #konghq.com/methods: GET
+    #konghq.com/regex-priority: '200'
+    konghq.com/plugins: 'oas-validation-petstore'
+    #konghq.com/strip-path: 'false'
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: service-petstore-8080
+            port:
+              number: 8080
+        path: /
+        pathType: ImplementationSpecific
+        

@@ -1,0 +1,19 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: opa-crd-approved-registries 
+metadata:
+ name: opa-c-approved-registries
+spec:
+ match:
+  kinds:
+   - apiGroups: [""]
+     kinds: ["Pod"]
+  excludedNamespaces:
+    - default
+    - gatekeeper-system
+    - ingress-controller
+    - kube-node-lease
+    - kube-public
+    - kube-system
+ parameters:
+    approvedregistries: ["quay.io/", "byte13.io/", "docker.io/"]
+    privilegedusers: ["kubernetes-admin"]

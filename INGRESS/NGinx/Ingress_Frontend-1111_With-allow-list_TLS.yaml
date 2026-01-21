@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-tls-ipfilter-frontendpod-1111
+  annotations:
+    haproxy-ingress.github.io/load-balance: random
+    #haproxy-ingress.github.io/allowlist-source-range: "10.13.3.100/32,10.1.2.0/24"
+    haproxy-ingress.github.io/allowlist-source-range: "10.13.3.2/32,10.1.2.0/24"
+spec:
+  ingressClassName: nginx
+  tls:
+  - secretName: haprx1-cert
+    hosts:
+    - "haprx1.lab.byte13.org"
+  rules:
+  - host: "haprx1.lab.byte13.org"
+    http:
+      paths:
+      - path: /frontend-1111
+        pathType: Prefix
+        backend:
+          service:
+            name: service-alpine-k8s-tools-1111 
+            port:
+              number: 1111

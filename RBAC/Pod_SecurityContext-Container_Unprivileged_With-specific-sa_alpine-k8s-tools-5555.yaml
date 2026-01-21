@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: frontendpod-unprivileged-5555
+  labels:
+    app: frontendpod-unprivileged-5555 
+    netzone: frontend
+
+spec:
+  serviceAccountName: sa-priv1
+  automountServiceAccountToken: true
+
+  containers:
+  - name: frontendpod-unprivileged-5555 
+    #imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
+    image: docker.io/byte13/alpine-k8s-tools
+    ports:
+    - containerPort: 5555
+    command: [ "/K8SLAB/ncwebsrv.sh", "5555" ]
+
+    securityContext:
+        runAsUser: 1234
+        privileged: false
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+           - ALL
+
+  nodeSelector:
+    kubernetes.io/hostname: k8sworker11.lab.byte13.org

@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: Gateway
+metadata:
+  name: gw-haproxy-https
+  #namespace: project1ns
+spec:
+  gatewayClassName: gwclass-haproxy 
+  listeners:
+  - name: listner-haproxy-https
+    port: 443
+    protocol: HTTPS
+    #protocol: TLS
+    hostname: "haprx1.lab.byte13.org"
+    tls:
+      mode: Terminate
+      #mode: Passthrough
+      certificateRefs:
+        - kind: Secret
+          name: haprx1-cert

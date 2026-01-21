@@ -1,0 +1,22 @@
+apiVersion: projectcalico.org/v3
+kind: HostEndpoint
+metadata:
+  name: k8sworker12-enp0s3
+  labels:
+    host-endpoint: workernode 
+spec:
+  interfaceName: enp0s3
+  node: k8sworker12-host
+  expectedIPs: ['10.13.4.2']
+
+apiVersion: projectcalico.org/v3
+kind: HostEndpoint
+metadata:
+  name: k8sworker11-enp0s3
+  labels:
+    host-endpoint: workernode 
+    environment: lab
+spec:
+  interfaceName: enp0s3
+  node: k8sworker11-host
+  expectedIPs: ['10.13.4.3']

@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-ipfilter
+  annotations:
+    load-balance: roundrobin
+    haproxy-ingress.github.io/allowlist-source-range: "10.13.3.2/32,10.13.3.100/32,10.1.2.0/24"
+spec:
+  ingressClassName: haproxy
+  rules:
+  - host: "haprx1.lab.byte13.org"
+    http:
+      paths:
+      - path: /frontend
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-alpine-k8s-tools
+            port:
+              number: 9999

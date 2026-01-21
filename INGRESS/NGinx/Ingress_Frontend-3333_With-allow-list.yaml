@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-ipfilter-frontendpod-3333
+  annotations:
+    haproxy-ingress.github.io/load-balance: random
+    #haproxy-ingress.github.io/allowlist-source-range: "10.13.2.100/32, 10.1.2.0/24"
+    haproxy-ingress.github.io/allowlist-source-range: "10.13.3.2/32, 10.1.2.0/24"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "haprx1.lab.byte13.org"
+    http:
+      paths:
+      - path: /frontend-3333
+        pathType: Prefix
+        backend:
+          service:
+            name: service-alpine-k8s-tools-3333 
+            port:
+              number: 3333

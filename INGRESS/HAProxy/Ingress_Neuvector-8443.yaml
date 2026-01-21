@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-neuvector-8443
+  annotations:
+    haproxy-ingress.github.io/load-balance: roundrobin
+spec:
+  ingressClassName: haproxy
+  rules:
+  - host: "haprx1.lab.byte13.org"
+    http:
+      paths:
+      - path: /neuvector
+        pathType: Prefix
+        backend:
+          service:
+            name: neuvector-service-webui
+            port:
+              number: 8443

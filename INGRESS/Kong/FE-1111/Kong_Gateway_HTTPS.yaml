@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway-kong-https
+  namespace: project1ns
+spec:
+  gatewayClassName: gwclass-kong
+  listeners:
+  - name: kong-https
+    port: 443
+    protocol: HTTPS
+    #protocol: TLS
+    hostname: "haprx1.lab.byte13.org"
+    tls:
+      mode: Terminate
+      #mode: Passthrough
+      certificateRefs:
+        - kind: Secret
+          name: haprx1-cert 

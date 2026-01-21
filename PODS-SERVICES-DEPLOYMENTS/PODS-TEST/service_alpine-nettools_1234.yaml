@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-alpine-nettools-1234
+spec:
+  #type: NodePort
+  #externalTrafficPolicy: Cluster
+  #externalTrafficPolicy: Local
+  type: ClusterIP
+  selector:
+    app: frontendpod-1234 
+  ports: 
+    - protocol: TCP
+      port: 1234
+      targetPort: 1234

@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cr-infraengineer
+# namespace: default
+rules:
+  - apiGroups: ["apps",""]
+    resources: ["pods", "deployments", "services", "configmaps"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["ingresses", "ingressclasses", "networkpolicies"]
+    verbs: ["create", "delete", "get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["csidrives", "csinodes", "csistoragecapacities", "storageclasses", "volumeattachments", "persistentvolumes", "storageclasses"]
+    verbs: ["create", "delete", "get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["resourcequotas"]
+    verbs: ["create", "delete", "get", "list", "watch"]

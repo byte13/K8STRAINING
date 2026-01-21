@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontendpod-9999
+  labels:
+    app: frontendpod-9999 
+  #namespace: project1ns 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontendpod-9999 
+  template:
+    metadata:
+      labels:
+        app: frontendpod-9999 
+        project: project1
+        netzone: frontend
+    spec:
+      volumes:
+        - name: vol-pvc-1gb-local 
+          persistentVolumeClaim:
+            claimName: pvc-1gb-local 
+
+      containers:
+      - name: frontendpod-9999 
+        #imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
+        image: docker.io/byte13/alpine-k8s-tools
+        ports:
+        - containerPort: 9999
+        command: [ "/K8SLAB/ncwebsrv.sh", "9999" ]
+        #args: [ "while true; do cat /B13/HTML/index.html | nc -l -p 9999; done" ]
+        securityContext:
+          privileged: true
+
+        volumeMounts:
+          - mountPath: "/mnt"
+            name: vol-pvc-1gb-local 
+
+      nodeSelector:
+        kubernetes.io/hostname: k8sworker11.lab.byte13.org
