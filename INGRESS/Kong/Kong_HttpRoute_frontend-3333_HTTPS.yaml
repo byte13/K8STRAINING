@@ -5,7 +5,7 @@ metadata:
   annotations:
     konghq.com/strip-path: 'true'
     # Next line active IP restriction plugin named rule
-    #konghq.com/plugins: ipr-test-network-only 
+    konghq.com/plugins: ipr-test-network-only 
 spec:
   parentRefs:
   - name: gateway-kong-https

@@ -8,7 +8,11 @@ metadata:
     # To add external client IP address in X-Forwarded-for header
     haproxy-ingress.github.io/forwarded-for: "true"
     #haproxy-ingress.github.io/allowlist-source-range: "10.13.3.100/32,10.1.2.0/24"
-    haproxy-ingress.github.io/allowlist-source-range: "10.13.3.2/32,10.13.3.100/32,10.1.2.0/24"
+    #haproxy-ingress.github.io/allowlist-source-range: "10.13.3.2/32,10.13.3.100/32,10.1.2.0/24"
+    #haproxy-ingress.github.io/allow-list: "10.13.3.100/32,10.1.2.0/24"
+    #haproxy-ingress.github.io/allow-list: "10.13.3.2/32,10.13.3.100/32,10.1.2.0/24"
+    #haproxy.org/allow-list: "10.13.3.100/32,10.1.2.0/24"
+    #haproxy.org/allow-list: "10.13.3.2/32,10.1.2.0/24"
 spec:
   ingressClassName: haproxy
   rules:
