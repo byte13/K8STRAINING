@@ -1,0 +1,25 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hr-http-frontend-1111 
+  namespace: project1ns
+  annotations:
+    konghq.com/strip-path: 'true'
+    # Next line active IP restriction plugin named rule
+    konghq.com/plugins: ipr-clients-1111
+
+spec:
+  parentRefs:
+  - name: gateway-project1
+    namespace: project1-gw-ns
+  hostnames:
+  - "haprx1.lab.byte13.org"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /frontend-1111
+    backendRefs:
+    - name: service-alpine-k8s-tools-1111 
+      kind: Service
+      port: 1111

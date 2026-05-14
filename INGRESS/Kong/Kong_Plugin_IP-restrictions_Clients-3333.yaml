@@ -1,0 +1,15 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+plugin: ip-restriction 
+metadata:
+ name: ipr-clients-3333
+ namespace: project2ns
+ annotations:
+   kubernetes.io/gateway.class: kong
+config:
+    allow:
+    - 10.13.3.222/32
+    #- 10.100.221.64/32
+    #deny:
+    #- 0.0.0.0/0
+

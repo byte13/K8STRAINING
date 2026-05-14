@@ -5,8 +5,9 @@ HN=`hostname`
 IFNAME=`ip -o link list | grep -i link/ether | awk '{print $2}' | cut -d "@" -f 1`
 HIP=`ip -4 -o addr show dev ${IFNAME} | awk '{print $4}'`
 HIPNOCIDR=`ip -4 -o addr show dev ${IFNAME} | awk '{print $4}' | cut -d "/" -f 1`
-IFMAC=`ip -o link list | grep -i link/ether | awk '{print $17}'` 
-BGCOLORSUFFIX=`ip -o link list | grep -i link/ether | awk '{print $17}' | cut -d ":" -f 4,5,6 | awk -F ":" '{print $1 $2 $3}'` 
+IFMAC=`ip -o link list | grep -i link/ether | awk '{print $16}'` 
+#BGCOLORSUFFIX=`ip -o link list | grep -i link/ether | awk '{print $17}' | cut -d ":" -f 4,5,6 | awk -F ":" '{print $1 $2 $3}'` 
+BGCOLORSUFFIX=`ip -o link list | grep -i link/ether | awk '{print $16}' | cut -d ":" -f 4,5,6 | awk -F ":" '{print $1 $2 $3}'` 
 HTMLFILE=/K8SLAB/index.html
 NCPORT=7777
 
